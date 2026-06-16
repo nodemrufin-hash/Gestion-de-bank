@@ -63,9 +63,9 @@ export default function Footer() {
 
   return (
     <footer style={{ backgroundColor: "#081A2E" }}>
-      <div className="max-w-6xl mx-auto px-6 pt-16 pb-8">
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-10 mb-12">
-          <div className="col-span-2 flex flex-col gap-4">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 sm:gap-10 mb-10 sm:mb-12">
+          <div className="col-span-2 sm:col-span-3 lg:col-span-2 flex flex-col gap-4">
             <Logo variant="light" size="md" />
             <p
               className="text-sm leading-relaxed max-w-xs"
@@ -115,10 +115,16 @@ export default function Footer() {
           className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3"
           style={{ borderTop: "1px solid rgba(31,78,107,0.4)" }}
         >
-          <p className="text-xs" style={{ color: "rgba(159,184,201,0.4)" }}>
+          <p
+            className="text-xs text-center sm:text-left"
+            style={{ color: "rgba(159,184,201,0.4)" }}
+          >
             © {year} Zeph Technologies inc. Tous droits réservés.
           </p>
-          <p className="text-xs" style={{ color: "rgba(159,184,201,0.3)" }}>
+          <p
+            className="text-xs text-center sm:text-right"
+            style={{ color: "rgba(159,184,201,0.3)" }}
+          >
             Banque fictive · Projet éducatif · Aucun service financier réel
           </p>
         </div>
