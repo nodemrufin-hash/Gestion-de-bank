@@ -3,18 +3,22 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { getAccount, getTransactions, getFutureTransactions, getRecurringTransactions, payCreditCard } from "@/lib/api";
+import { getAccount, getClientAccounts, getTransactions, getFutureTransactions, getRecurringTransactions, payCreditCard } from "@/lib/api";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 export default function AccountDetailPage() {
   const { id, accountId } = useParams<{ id: string; accountId: string }>();
   const [account, setAccount] = useState<any>(null);
+  const [clientAccounts, setClientAccounts] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [futureTxs, setFutureTxs] = useState<any[]>([]);
   const [recurringTxs, setRecurringTxs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [payFromAccountId, setPayFromAccountId] = useState("");
   const [payAmount, setPayAmount] = useState("");
   const [paying, setPaying] = useState(false);
   const [payMsg, setPayMsg] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     if (!accountId) return;
@@ -32,20 +36,36 @@ export default function AccountDetailPage() {
     .finally(() => setLoading(false));
   }, [accountId]);
 
-  const handlePayCredit = async () => {
+  useEffect(() => {
+    if (!id) return;
+    getClientAccounts(id).then((accs) => {
+      setClientAccounts(accs);
+      const chequeAcc = accs.find((a: any) => a.type === "cheque");
+      if (chequeAcc) setPayFromAccountId(chequeAcc.id);
+    });
+  }, [id]);
+
+  const handlePayCredit = () => {
     const amt = parseFloat(payAmount);
-    if (isNaN(amt) || amt <= 0) return;
+    if (isNaN(amt) || amt <= 0 || !payFromAccountId) return;
+    setShowConfirm(true);
+  };
+
+  const handleConfirmPayCredit = async () => {
+    const amt = parseFloat(payAmount);
     setPaying(true);
     try {
-      await payCreditCard(accountId, { fromAccountId: id, amount: amt });
+      await payCreditCard(accountId, { fromAccountId: payFromAccountId, amount: amt });
       setPayMsg(`Paiement de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`);
       setPayAmount("");
+      setShowConfirm(false);
       // Refresh
       const [acc, txs] = await Promise.all([getAccount(accountId), getTransactions(accountId)]);
       setAccount(acc);
       setTransactions(txs);
     } catch (e: any) {
       setPayMsg(`Erreur : ${e.message}`);
+      setShowConfirm(false);
     }
     setPaying(false);
   };
@@ -87,8 +107,21 @@ export default function AccountDetailPage() {
       {isCredit && (
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
           <h2 className="font-semibold text-slate-900 mb-4">Payer la carte de crédit</h2>
-          <div className="flex gap-3 items-end">
-            <div className="flex-1">
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="flex-1 min-w-[180px]">
+              <label className="block text-xs text-slate-500 mb-1">Compte à débiter</label>
+              <select
+                value={payFromAccountId}
+                onChange={(e) => setPayFromAccountId(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+              >
+                <option value="">Sélectionner un compte</option>
+                {clientAccounts.filter((a) => a.type === "cheque").map((a) => (
+                  <option key={a.id} value={a.id}>{a.name} — {a.balance.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex-1 min-w-[140px]">
               <label className="block text-xs text-slate-500 mb-1">Montant</label>
               <input
                 type="number"
@@ -111,6 +144,18 @@ export default function AccountDetailPage() {
           {payMsg && <p className={`text-sm mt-2 ${payMsg.startsWith("Erreur") ? "text-red-500" : "text-emerald-600"}`}>{payMsg}</p>}
         </div>
       )}
+
+      <ConfirmModal
+        open={showConfirm}
+        title="Confirmer le paiement"
+        loading={paying}
+        onConfirm={handleConfirmPayCredit}
+        onCancel={() => setShowConfirm(false)}
+      >
+        <p>Compte à débiter : <strong>{clientAccounts.find((a) => a.id === payFromAccountId)?.name}</strong></p>
+        <p>Carte de crédit : <strong>{account?.name}</strong></p>
+        <p>Montant : <strong>{(parseFloat(payAmount) || 0).toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</strong></p>
+      </ConfirmModal>
 
       {/* Transactions futures */}
       {futureTxs.length > 0 && (
