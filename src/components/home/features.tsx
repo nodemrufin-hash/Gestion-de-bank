@@ -140,9 +140,9 @@ const features: Feature[] = [
 
 export default function Features() {
   return (
-    <section id="features" className="py-28 bg-white dark:bg-slate-950">
+    <section id="features" className="py-28 dark:bg-slate-950 bg-white">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="max-w-xl mb-16">
+        <div className="max-w-xl mb-16 mx-auto text-center">
           <p className="text-brand-800 dark:text-brand-300 text-sm font-semibold uppercase tracking-widest mb-3">
             Fonctionnalités
           </p>
