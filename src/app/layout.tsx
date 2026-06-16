@@ -22,12 +22,6 @@ export const metadata: Metadata = {
   },
   description:
     "Zeph est la néobanque québécoise sans frais cachés. Ouvrez un compte en 2 minutes, gérez votre argent en temps réel.",
-  openGraph: {
-    title: "Zeph — Votre banque numérique",
-    description: "Sans frais cachés. Sans paperasse. Ouverture en 2 minutes.",
-    locale: "fr_CA",
-    type: "website",
-  },
 };
 
 export default function RootLayout({
