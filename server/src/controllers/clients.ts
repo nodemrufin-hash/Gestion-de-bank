@@ -5,7 +5,7 @@ import { getDb, saveDb } from "../database/database";
 export async function getAll(req: Request, res: Response) {
   const db = await getDb();
   const clients = db.exec("SELECT * FROM clients ORDER BY lastName, firstName");
-  const rows = clients.length > 0 ? clients[0].values.map((v) => ({
+  const rows = clients.length > 0 ? clients[0].values.map((v: any[]) => ({
     id: v[0], firstName: v[1], lastName: v[2], email: v[3], phone: v[4],
     address: v[5], city: v[6], province: v[7], postalCode: v[8], dateNaissance: v[9],
   })) : [];
@@ -15,7 +15,7 @@ export async function getAll(req: Request, res: Response) {
 export async function getById(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare("SELECT * FROM clients WHERE id = ?");
-  stmt.bind([req.params.id]);
+  stmt.bind([req.params.id as string]);
   if (stmt.step()) {
     const v = stmt.getAsObject();
     res.json(v);
@@ -28,7 +28,7 @@ export async function getById(req: Request, res: Response) {
 export async function getAccounts(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare("SELECT * FROM accounts WHERE clientId = ? ORDER BY type");
-  stmt.bind([req.params.id]);
+  stmt.bind([req.params.id as string]);
   const accounts: any[] = [];
   while (stmt.step()) accounts.push(stmt.getAsObject());
   stmt.free();
@@ -40,7 +40,7 @@ export async function getBalancesByCategory(req: Request, res: Response) {
   const stmt = db.prepare(
     "SELECT category, SUM(balance) as total FROM accounts WHERE clientId = ? GROUP BY category"
   );
-  stmt.bind([req.params.id]);
+  stmt.bind([req.params.id as string]);
   const categories: any[] = [];
   while (stmt.step()) categories.push(stmt.getAsObject());
   stmt.free();
@@ -63,7 +63,7 @@ export async function getBalancesByCategory(req: Request, res: Response) {
 
 export async function resetClient(req: Request, res: Response) {
   const db = await getDb();
-  const clientId = req.params.id;
+  const clientId = req.params.id as string;
 
   // Delete transactions
   const accStmt = db.prepare("SELECT id FROM accounts WHERE clientId = ?");

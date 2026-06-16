@@ -26,6 +26,9 @@ server/data/*.db
 .DS_Store
 *.pem
 
+# config locale d'editeur / outils
+.vscode/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

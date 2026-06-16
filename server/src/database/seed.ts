@@ -40,7 +40,7 @@ export async function seed(): Promise<void> {
 
   // Check if already seeded
   const existing = db.exec("SELECT COUNT(*) as cnt FROM clients");
-  if (existing.length > 0 && existing[0].values[0][0] > 0) {
+  if (existing.length > 0 && Number(existing[0].values[0][0]) > 0) {
     console.log("Base de données déjà initialisée.");
     return;
   }

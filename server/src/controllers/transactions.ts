@@ -7,7 +7,7 @@ export async function getByAccount(req: Request, res: Response) {
   const stmt = db.prepare(
     "SELECT * FROM transactions WHERE accountId = ? AND isFuture = 0 ORDER BY date DESC LIMIT 100"
   );
-  stmt.bind([req.params.accountId]);
+  stmt.bind([req.params.accountId as string]);
   const txs: any[] = [];
   while (stmt.step()) txs.push(stmt.getAsObject());
   stmt.free();
@@ -19,7 +19,7 @@ export async function getFuture(req: Request, res: Response) {
   const stmt = db.prepare(
     "SELECT * FROM transactions WHERE accountId = ? AND isFuture = 1 ORDER BY scheduledDate ASC"
   );
-  stmt.bind([req.params.accountId]);
+  stmt.bind([req.params.accountId as string]);
   const txs: any[] = [];
   while (stmt.step()) txs.push(stmt.getAsObject());
   stmt.free();
@@ -28,7 +28,7 @@ export async function getFuture(req: Request, res: Response) {
 
 export async function getRecurring(req: Request, res: Response) {
   const db = await getDb();
-  const accountId = req.params.accountId;
+  const accountId = req.params.accountId as string;
   const stmt = db.prepare(
     "SELECT * FROM transactions WHERE accountId = ? AND isRecurring = 1 ORDER BY date DESC"
   );

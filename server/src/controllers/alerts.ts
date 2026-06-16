@@ -4,7 +4,7 @@ import { getDb, saveDb } from "../database/database";
 export async function getByClient(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare("SELECT * FROM low_balance_alerts WHERE clientId = ?");
-  stmt.bind([req.params.clientId]);
+  stmt.bind([req.params.clientId as string]);
   const alerts: any[] = [];
   while (stmt.step()) alerts.push(stmt.getAsObject());
   stmt.free();

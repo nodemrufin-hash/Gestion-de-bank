@@ -5,7 +5,7 @@ import { getDb, saveDb } from "../database/database";
 export async function getByClient(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare("SELECT * FROM saving_goals WHERE clientId = ? ORDER BY createdAt");
-  stmt.bind([req.params.clientId]);
+  stmt.bind([req.params.clientId as string]);
   const goals: any[] = [];
   while (stmt.step()) goals.push(stmt.getAsObject());
   stmt.free();
@@ -42,7 +42,7 @@ export async function updateProgress(req: Request, res: Response) {
 
 export async function remove(req: Request, res: Response) {
   const db = await getDb();
-  db.run("DELETE FROM saving_goals WHERE id = ?", [req.params.id]);
+  db.run("DELETE FROM saving_goals WHERE id = ?", [req.params.id as string]);
   saveDb();
   res.json({ success: true });
 }
