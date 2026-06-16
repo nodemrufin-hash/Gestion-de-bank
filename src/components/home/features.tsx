@@ -128,11 +128,11 @@ export default function Features() {
   return (
     <section
       id="features"
-      className="py-28"
+      className="py-16 sm:py-24 lg:py-28"
       style={{ backgroundColor: "#F2F5F7" }}
     >
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="max-w-xl mb-16 mx-auto text-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="max-w-xl mb-10 sm:mb-16 mx-auto text-center">
           <p
             className="text-sm font-semibold uppercase tracking-widest mb-3"
             style={{ color: "#1F4E6B" }}
@@ -140,7 +140,7 @@ export default function Features() {
             Fonctionnalités
           </p>
           <h2
-            className="text-4xl font-bold leading-tight mb-4"
+            className="text-3xl sm:text-4xl font-bold leading-tight mb-4"
             style={{ fontFamily: "var(--font-syne)", color: "#081A2E" }}
           >
             Tout ce qu'une banque devrait faire — sans le reste.
@@ -150,7 +150,7 @@ export default function Features() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {features.map(({ icon, title, description }) => (
             <div
               key={title}

@@ -85,20 +85,20 @@ export default function Security() {
   return (
     <section
       id="securite"
-      className="py-28 relative overflow-hidden"
+      className="py-16 sm:py-24 lg:py-28 relative overflow-hidden"
       style={{ backgroundColor: "#0E2A47" }}
     >
       <div
-        className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none"
+        className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 rounded-full blur-3xl pointer-events-none"
         style={{ backgroundColor: "rgba(31,78,107,0.3)" }}
       />
       <div
-        className="absolute bottom-0 left-0 w-64 h-64 rounded-full blur-3xl pointer-events-none"
+        className="absolute bottom-0 left-0 w-48 sm:w-64 h-48 sm:h-64 rounded-full blur-3xl pointer-events-none"
         style={{ backgroundColor: "rgba(31,78,107,0.2)" }}
       />
 
-      <div className="relative max-w-6xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="flex flex-col gap-8">
             <div>
               <p
@@ -108,21 +108,20 @@ export default function Security() {
                 Sécurité
               </p>
               <h2
-                className="text-4xl font-bold text-white leading-tight mb-4"
+                className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4"
                 style={{ fontFamily: "var(--font-syne)" }}
               >
                 Votre argent est protégé.{" "}
                 <span style={{ color: "#9FB8C9" }}>Point.</span>
               </h2>
               <p
-                className="leading-relaxed text-lg"
+                className="leading-relaxed text-base sm:text-lg"
                 style={{ color: "rgba(159,184,201,0.7)" }}
               >
                 Zeph utilise les mêmes standards de sécurité que les grandes
                 institutions financières — sans la complexité inutile.
               </p>
             </div>
-
             <div className="flex flex-col gap-4">
               {guarantees.map(({ icon, label }) => (
                 <div key={label} className="flex items-center gap-4">
@@ -143,8 +142,8 @@ export default function Security() {
             </div>
           </div>
 
-          {/* Shield */}
-          <div className="flex items-center justify-center">
+          {/* Shield — caché sur mobile */}
+          <div className="hidden lg:flex items-center justify-center">
             <div className="relative">
               <div
                 className="w-64 h-64 rounded-full border flex items-center justify-center"
