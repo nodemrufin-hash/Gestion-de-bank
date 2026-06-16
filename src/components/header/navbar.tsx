@@ -28,20 +28,19 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <Logo variant="dark" size="md" />
 
-        {/* Desktop — liens */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map(({ label, href }) => (
             <Link
               key={label}
               href={href}
-              className="text-sm font-medium text-slate-600 hover:text-brand-800 transition-colors"
+              className="text-sm font-medium transition-colors hover:opacity-70"
+              style={{ color: "#0E2A47" }}
             >
               {label}
             </Link>
           ))}
         </div>
 
-        {/* Desktop — actions */}
         <div className="hidden md:flex items-center gap-3">
           <Button href="/login" variant="ghost" size="sm">
             Connexion
@@ -51,28 +50,28 @@ export default function Navbar() {
           </Button>
         </div>
 
-        {/* Mobile — burger */}
         <button
           className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-          aria-expanded={menuOpen}
+          aria-label={menuOpen ? "Fermer" : "Menu"}
         >
           <div className="w-5 flex flex-col gap-1.5">
             <span
-              className={`block h-0.5 bg-slate-700 transition-all duration-300 origin-center ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+              className={`block h-0.5 transition-all duration-300 origin-center ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+              style={{ backgroundColor: "#081A2E" }}
             />
             <span
-              className={`block h-0.5 bg-slate-700 transition-all duration-300 ${menuOpen ? "opacity-0 scale-x-0" : ""}`}
+              className={`block h-0.5 transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}
+              style={{ backgroundColor: "#081A2E" }}
             />
             <span
-              className={`block h-0.5 bg-slate-700 transition-all duration-300 origin-center ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+              className={`block h-0.5 transition-all duration-300 origin-center ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+              style={{ backgroundColor: "#081A2E" }}
             />
           </div>
         </button>
       </div>
 
-      {/* Mobile — menu */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"} bg-white border-t border-slate-100 shadow-lg`}
       >
@@ -81,7 +80,8 @@ export default function Navbar() {
             <Link
               key={label}
               href={href}
-              className="text-sm font-medium text-slate-700 hover:text-brand-800 transition-colors py-1"
+              className="text-sm font-medium py-1 hover:opacity-70 transition-opacity"
+              style={{ color: "#0E2A47" }}
               onClick={() => setMenuOpen(false)}
             >
               {label}

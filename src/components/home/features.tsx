@@ -4,7 +4,6 @@ interface Feature {
   icon: ReactNode;
   title: string;
   description: string;
-  accent: string;
 }
 
 const features: Feature[] = [
@@ -21,8 +20,7 @@ const features: Feature[] = [
     ),
     title: "Virements instantanés",
     description:
-      "Envoyez de l'argent à n'importe qui au Canada en quelques secondes, 24h/24, 7j/7. Aucun délai, aucun frais.",
-    accent: "bg-brand-50 text-brand-800 dark:bg-brand-950 dark:text-brand-300",
+      "Envoyez de l'argent à n'importe qui au Canada en quelques secondes, 24h/24, 7j/7.",
   },
   {
     icon: (
@@ -47,8 +45,7 @@ const features: Feature[] = [
     ),
     title: "Carte virtuelle & physique",
     description:
-      "Une carte Visa incluse dès l'ouverture. Générez autant de cartes virtuelles que vous voulez pour vos achats en ligne.",
-    accent: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+      "Une carte Visa incluse dès l'ouverture. Générez autant de cartes virtuelles que vous voulez.",
   },
   {
     icon: (
@@ -63,8 +60,7 @@ const features: Feature[] = [
     ),
     title: "Tableau de bord en temps réel",
     description:
-      "Suivez chaque transaction au moment où elle se produit. Catégorisation automatique et analyses claires chaque mois.",
-    accent: "bg-brand-50 text-brand-800 dark:bg-brand-950 dark:text-brand-300",
+      "Suivez chaque transaction au moment où elle se produit. Catégorisation automatique mensuelle.",
   },
   {
     icon: (
@@ -80,8 +76,7 @@ const features: Feature[] = [
     ),
     title: "Épargne automatique",
     description:
-      "Définissez des règles d'épargne intelligentes : arrondi à l'achat, virement récurrent, objectif avec suivi visuel.",
-    accent: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+      "Arrondi à l'achat, virement récurrent, objectif avec suivi visuel.",
   },
   {
     icon: (
@@ -105,8 +100,7 @@ const features: Feature[] = [
     ),
     title: "Change sans frais",
     description:
-      "Voyagez ou payez en USD, EUR et plus — au taux réel, sans commission cachée. Disponible dans 150+ pays.",
-    accent: "bg-brand-50 text-brand-800 dark:bg-brand-950 dark:text-brand-300",
+      "USD, EUR et plus — au taux réel, sans commission cachée. Disponible dans 150+ pays.",
   },
   {
     icon: (
@@ -118,13 +112,7 @@ const features: Feature[] = [
           strokeLinejoin="round"
         />
         <path
-          d="M2 17l10 5 10-5"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M2 12l10 5 10-5"
+          d="M2 17l10 5 10-5M2 12l10 5 10-5"
           stroke="currentColor"
           strokeWidth="1.5"
           strokeLinejoin="round"
@@ -132,47 +120,58 @@ const features: Feature[] = [
       </svg>
     ),
     title: "Intégrations intelligentes",
-    description:
-      "Connectez Zeph à vos outils — comptabilité, fiscalité, REER — pour une gestion financière unifiée.",
-    accent: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+    description: "Connectez Zeph à vos outils — comptabilité, fiscalité, REER.",
   },
 ];
 
 export default function Features() {
   return (
-    <section id="features" className="py-28 dark:bg-slate-950 bg-white">
+    <section
+      id="features"
+      className="py-28"
+      style={{ backgroundColor: "#F2F5F7" }}
+    >
       <div className="max-w-6xl mx-auto px-6">
         <div className="max-w-xl mb-16 mx-auto text-center">
-          <p className="text-brand-800 dark:text-brand-300 text-sm font-semibold uppercase tracking-widest mb-3">
+          <p
+            className="text-sm font-semibold uppercase tracking-widest mb-3"
+            style={{ color: "#1F4E6B" }}
+          >
             Fonctionnalités
           </p>
           <h2
-            className="text-4xl font-bold text-slate-900 dark:text-white leading-tight mb-4"
-            style={{ fontFamily: "var(--font-syne)" }}
+            className="text-4xl font-bold leading-tight mb-4"
+            style={{ fontFamily: "var(--font-syne)", color: "#081A2E" }}
           >
             Tout ce qu'une banque devrait faire — sans le reste.
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
-            Pas de succursales à chercher, pas de formulaires à imprimer. Juste
-            une expérience bancaire qui respecte votre temps.
+          <p className="leading-relaxed" style={{ color: "#9FB8C9" }}>
+            Pas de succursales à chercher, pas de formulaires à imprimer.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map(({ icon, title, description, accent }) => (
+          {features.map(({ icon, title, description }) => (
             <div
               key={title}
-              className="group p-6 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-brand-200 dark:hover:border-brand-800 hover:shadow-md hover:shadow-brand-50 dark:hover:shadow-brand-950 transition-all duration-300 bg-white dark:bg-slate-900"
+              className="group p-6 rounded-2xl bg-white border border-slate-100 hover:shadow-md transition-all duration-300"
             >
               <div
-                className={`w-11 h-11 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110 ${accent}`}
+                className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110"
+                style={{ backgroundColor: "#F2F5F7", color: "#1F4E6B" }}
               >
                 {icon}
               </div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-2 text-base">
+              <h3
+                className="font-semibold mb-2 text-base"
+                style={{ color: "#081A2E" }}
+              >
                 {title}
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: "#9FB8C9" }}
+              >
                 {description}
               </p>
             </div>
