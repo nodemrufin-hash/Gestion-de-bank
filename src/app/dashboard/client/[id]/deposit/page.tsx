@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getClientAccounts, deposit, withdraw, depositCheque } from "@/lib/api";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 export default function DepositPage() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ export default function DepositPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [chequeFile, setChequeFile] = useState<File | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -25,7 +27,7 @@ export default function DepositPage() {
     });
   }, [id]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     setError("");
@@ -34,6 +36,11 @@ export default function DepositPage() {
     if (isNaN(amt) || amt <= 0) { setError("Montant invalide"); return; }
     if (!accountId) { setError("Compte requis"); return; }
 
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = async () => {
+    const amt = parseFloat(amount);
     setLoading(true);
     try {
       if (mode === "cheque") {
@@ -54,13 +61,18 @@ export default function DepositPage() {
       setAmount("");
       setDescription("");
       setChequeFile(null);
+      setShowConfirm(false);
     } catch (e: any) {
       setError(e.message);
+      setShowConfirm(false);
     }
     setLoading(false);
   };
 
   const isCheque = mode === "cheque";
+  const account = accounts.find((a) => a.id === accountId);
+  const amt = parseFloat(amount) || 0;
+  const operationLabel = mode === "cheque" ? "le dépôt de chèque" : mode === "depot" ? "le dépôt" : "le retrait";
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -138,12 +150,23 @@ export default function DepositPage() {
 
         <button
           type="submit"
-          disabled={loading}
           className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50"
         >
-          {loading ? "Traitement..." : isCheque ? "Déposer le chèque" : mode === "depot" ? "Effectuer le dépôt" : "Effectuer le retrait"}
+          {isCheque ? "Déposer le chèque" : mode === "depot" ? "Effectuer le dépôt" : "Effectuer le retrait"}
         </button>
       </form>
+
+      <ConfirmModal
+        open={showConfirm}
+        title={`Confirmer ${operationLabel}`}
+        loading={loading}
+        onConfirm={handleConfirm}
+        onCancel={() => setShowConfirm(false)}
+      >
+        <p>Compte : <strong>{account?.name}</strong></p>
+        <p>Montant : <strong>{amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</strong></p>
+        {isCheque && <p>Photo du chèque : <strong>{chequeFile ? chequeFile.name : "aucune"}</strong></p>}
+      </ConfirmModal>
     </div>
   );
 }
