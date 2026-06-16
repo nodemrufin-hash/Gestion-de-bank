@@ -14,6 +14,17 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
 // --- Clients ---
 export const getClients = () => request<any[]>("/clients");
+export const createClient = (data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  dateNaissance: string;
+}) => request<{ success: boolean; id: string }>("/clients", { method: "POST", body: JSON.stringify(data) });
 export const getClient = (id: string) => request<any>(`/clients/${id}`);
 export const getClientAccounts = (clientId: string) => request<any[]>(`/clients/${clientId}/accounts`);
 export const getClientBalances = (clientId: string) => request<any[]>(`/clients/${clientId}/balances`);

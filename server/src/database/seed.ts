@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import type { Database } from "sql.js";
 import { getDb, saveDb } from "./database";
 
 function randomAmount(min: number, max: number): number {
@@ -35,6 +36,98 @@ const PROVIDERS = [
   "Apple iCloud",
 ];
 
+/**
+ * Génère les comptes, transactions, bénéficiaires, objectifs et l'alerte de
+ * solde faible pour un client existant. Utilisé à la fois par le seed initial
+ * et lors de la création d'un nouveau profil client (F-01 / F-19).
+ */
+export function generateClientFinancials(db: Database, clientId: string): void {
+  // --- ACCOUNTS ---
+  const accountDefs = [
+    { type: "cheque", category: "depenses", name: "Chèques", balance: randomAmount(500, 3000), creditLimit: 0 },
+    { type: "epargne", category: "epargne", name: "Épargne", balance: randomAmount(1000, 15000), creditLimit: 0 },
+    { type: "credit", category: "emprunt", name: "Carte de crédit", balance: -randomAmount(200, 4000), creditLimit: 5000 },
+    { type: "pret", category: "emprunt", name: "Prêt personnel", balance: -randomAmount(5000, 30000), creditLimit: 0, interestRate: 6.5 },
+    { type: "investissement", category: "investissement", name: "CELI", balance: randomAmount(2000, 50000), creditLimit: 0 },
+  ];
+
+  const accountIds: string[] = [];
+  for (const acc of accountDefs) {
+    const accId = uuid();
+    const accNum = `ZEPH-${String(Math.floor(10000 + Math.random() * 90000))}-${String(Math.floor(100 + Math.random() * 900))}`;
+    db.run(
+      `INSERT INTO accounts (id, clientId, type, category, name, balance, accountNumber, creditLimit, interestRate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [accId, clientId, acc.type, acc.category, acc.name, acc.balance, accNum, acc.creditLimit, acc.interestRate || 0]
+    );
+    accountIds.push(accId);
+
+    // --- TRANSACTIONS (last 90 days, ~15-25 per account) ---
+    const txCount = 15 + Math.floor(Math.random() * 10);
+    for (let i = 0; i < txCount; i++) {
+      const txId = uuid();
+      const date = randomDate(3);
+      const isDebit = Math.random() > 0.45;
+      const isLarge = Math.random() > 0.85;
+      const descriptions = isDebit
+        ? ["Épicerie", "Restaurant", "Stationnement", "Pharmacie", "Amazon.ca", "Tim Hortons", "SAQ", "Métro", "Essence", "Uber"]
+        : ["Dépôt direct", "Virement reçu", "Remboursement", "Intérêt", "Transfert"];
+      const desc = descriptions.sort(() => Math.random() - 0.5)[0];
+      const amount = isLarge ? randomAmount(200, 1500) : randomAmount(5, 200);
+
+      db.run(
+        `INSERT INTO transactions (id, accountId, date, description, amount, type, category, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [txId, accId, date, desc, Math.round(amount * 100) / 100, isDebit ? "debit" : "credit", acc.category, "complete"]
+      );
+    }
+  }
+
+  // --- FUTURE TRANSACTIONS (scheduled payments) ---
+  for (let i = 0; i < 3; i++) {
+    const txId = uuid();
+    const accSrc = accountIds[0]; // cheque
+    const provider = PROVIDERS.sort(() => Math.random() - 0.5)[0];
+    const date = futureDate(5 + i * 10);
+    db.run(
+      `INSERT INTO transactions (id, accountId, date, description, amount, type, category, isRecurring, frequency, isFuture, scheduledDate, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [txId, accSrc, date, provider, randomAmount(50, 300), "debit", "depenses", 1, "mensuel", 1, date, "pending"]
+    );
+  }
+
+  // --- BENEFICIARIES ---
+  const beneficiaries = [
+    { name: "Marc Lefebvre", email: "marc.lefebvre@email.ca", phone: "438-555-1001", isFournisseur: 0 },
+    { name: "Sophie Bouchard", email: "sophie.bouchard@email.ca", phone: "514-555-1002", isFournisseur: 0 },
+    { name: "Hydro-Québec", email: "factures@hydroquebec.ca", phone: null, isFournisseur: 1 },
+    { name: "Vidéotron", email: "factures@videotron.ca", phone: null, isFournisseur: 1 },
+    { name: "Bell", email: "factures@bell.ca", phone: null, isFournisseur: 1 },
+  ];
+  for (const b of beneficiaries) {
+    db.run(
+      `INSERT INTO beneficiaries (id, clientId, name, email, phone, isFournisseur) VALUES (?, ?, ?, ?, ?, ?)`,
+      [uuid(), clientId, b.name, b.email, b.phone, b.isFournisseur ? 1 : 0]
+    );
+  }
+
+  // --- SAVING GOALS ---
+  const goals = [
+    { name: "Voyage au Japon", target: 5000, current: 1250 },
+    { name: "Fonds d'urgence", target: 10000, current: 3400 },
+    { name: "Nouvel ordinateur", target: 2500, current: 1800 },
+  ];
+  for (const g of goals) {
+    db.run(
+      `INSERT INTO saving_goals (id, clientId, accountId, name, targetAmount, currentAmount) VALUES (?, ?, ?, ?, ?, ?)`,
+      [uuid(), clientId, accountIds[1], g.name, g.target, g.current]
+    );
+  }
+
+  // --- LOW BALANCE ALERT ---
+  db.run(
+    `INSERT INTO low_balance_alerts (id, clientId, accountId, threshold, enabled) VALUES (?, ?, ?, ?, ?)`,
+    [uuid(), clientId, accountIds[0], 100, 1]
+  );
+}
+
 export async function seed(): Promise<void> {
   const db = await getDb();
 
@@ -60,91 +153,7 @@ export async function seed(): Promise<void> {
       `INSERT INTO clients (id, firstName, lastName, email, phone, address, city, province, postalCode, dateNaissance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [id, c.firstName, c.lastName, c.email, c.phone, c.address, c.city, c.province, c.postalCode, c.dateNaissance]
     );
-
-    // --- ACCOUNTS ---
-    const accountDefs = [
-      { type: "cheque", category: "depenses", name: "Chèques", balance: randomAmount(500, 3000), creditLimit: 0 },
-      { type: "epargne", category: "epargne", name: "Épargne", balance: randomAmount(1000, 15000), creditLimit: 0 },
-      { type: "credit", category: "emprunt", name: "Carte de crédit", balance: -randomAmount(200, 4000), creditLimit: 5000 },
-      { type: "pret", category: "emprunt", name: "Prêt personnel", balance: -randomAmount(5000, 30000), creditLimit: 0, interestRate: 6.5 },
-      { type: "investissement", category: "investissement", name: "CELI", balance: randomAmount(2000, 50000), creditLimit: 0 },
-    ];
-
-    const accountIds: string[] = [];
-    for (const acc of accountDefs) {
-      const accId = uuid();
-      const accNum = `ZEPH-${String(Math.floor(10000 + Math.random() * 90000))}-${String(Math.floor(100 + Math.random() * 900))}`;
-      db.run(
-        `INSERT INTO accounts (id, clientId, type, category, name, balance, accountNumber, creditLimit, interestRate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [accId, id, acc.type, acc.category, acc.name, acc.balance, accNum, acc.creditLimit, acc.interestRate || 0]
-      );
-      accountIds.push(accId);
-
-      // --- TRANSACTIONS (last 90 days, ~15-25 per account) ---
-      const txCount = 15 + Math.floor(Math.random() * 10);
-      for (let i = 0; i < txCount; i++) {
-        const txId = uuid();
-        const date = randomDate(3);
-        const isDebit = Math.random() > 0.45;
-        const isLarge = Math.random() > 0.85;
-        const descriptions = isDebit
-          ? ["Épicerie", "Restaurant", "Stationnement", "Pharmacie", "Amazon.ca", "Tim Hortons", "SAQ", "Métro", "Essence", "Uber"]
-          : ["Dépôt direct", "Virement reçu", "Remboursement", "Intérêt", "Transfert"];
-        const desc = (isDebit ? descriptions : descriptions).sort(() => Math.random() - 0.5)[0];
-        const amount = isLarge ? randomAmount(200, 1500) : randomAmount(5, 200);
-
-        db.run(
-          `INSERT INTO transactions (id, accountId, date, description, amount, type, category, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          [txId, accId, date, desc, Math.round(amount * 100) / 100, isDebit ? "debit" : "credit", acc.category, "complete"]
-        );
-      }
-    }
-
-    // --- FUTURE TRANSACTIONS (scheduled payments) ---
-    for (let i = 0; i < 3; i++) {
-      const txId = uuid();
-      const accSrc = accountIds[0]; // cheque
-      const provider = PROVIDERS.sort(() => Math.random() - 0.5)[0];
-      const date = futureDate(5 + i * 10);
-      db.run(
-        `INSERT INTO transactions (id, accountId, date, description, amount, type, category, isRecurring, frequency, isFuture, scheduledDate, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [txId, accSrc, date, provider, randomAmount(50, 300), "debit", "depenses", 1, "mensuel", 1, date, "pending"]
-      );
-    }
-
-    // --- BENEFICIARIES ---
-    const beneficiaries = [
-      { name: "Marc Lefebvre", email: "marc.lefebvre@email.ca", phone: "438-555-1001", isFournisseur: 0 },
-      { name: "Sophie Bouchard", email: "sophie.bouchard@email.ca", phone: "514-555-1002", isFournisseur: 0 },
-      { name: "Hydro-Québec", email: "factures@hydroquebec.ca", phone: null, isFournisseur: 1 },
-      { name: "Vidéotron", email: "factures@videotron.ca", phone: null, isFournisseur: 1 },
-      { name: "Bell", email: "factures@bell.ca", phone: null, isFournisseur: 1 },
-    ];
-    for (const b of beneficiaries) {
-      db.run(
-        `INSERT INTO beneficiaries (id, clientId, name, email, phone, isFournisseur) VALUES (?, ?, ?, ?, ?, ?)`,
-        [uuid(), id, b.name, b.email, b.phone, b.isFournisseur ? 1 : 0]
-      );
-    }
-
-    // --- SAVING GOALS ---
-    const goals = [
-      { name: "Voyage au Japon", target: 5000, current: 1250 },
-      { name: "Fonds d'urgence", target: 10000, current: 3400 },
-      { name: "Nouvel ordinateur", target: 2500, current: 1800 },
-    ];
-    for (const g of goals) {
-      db.run(
-        `INSERT INTO saving_goals (id, clientId, accountId, name, targetAmount, currentAmount) VALUES (?, ?, ?, ?, ?, ?)`,
-        [uuid(), id, accountIds[1], g.name, g.target, g.current]
-      );
-    }
-
-    // --- LOW BALANCE ALERT ---
-    db.run(
-      `INSERT INTO low_balance_alerts (id, clientId, accountId, threshold, enabled) VALUES (?, ?, ?, ?, ?)`,
-      [uuid(), id, accountIds[0], 100, 1]
-    );
+    generateClientFinancials(db, id);
   }
 
   // --- PARAMETERS ---

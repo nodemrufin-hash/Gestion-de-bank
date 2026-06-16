@@ -1,6 +1,52 @@
 import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
+import { generateClientFinancials } from "../database/seed";
+
+const REQUIRED_FIELDS = [
+  "firstName",
+  "lastName",
+  "email",
+  "phone",
+  "address",
+  "city",
+  "province",
+  "postalCode",
+  "dateNaissance",
+] as const;
+
+export async function create(req: Request, res: Response) {
+  const db = await getDb();
+
+  // Validation cote serveur (cahier des charges 3.2 / 5.1)
+  for (const field of REQUIRED_FIELDS) {
+    const value = req.body?.[field];
+    if (value === undefined || value === null || String(value).trim() === "") {
+      res.status(400).json({ error: `Le champ « ${field} » est requis.` });
+      return;
+    }
+  }
+
+  const { firstName, lastName, email, phone, address, city, province, postalCode, dateNaissance } = req.body;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(String(email))) {
+    res.status(400).json({ error: "Adresse courriel invalide." });
+    return;
+  }
+
+  const id = uuid();
+  db.run(
+    `INSERT INTO clients (id, firstName, lastName, email, phone, address, city, province, postalCode, dateNaissance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [id, firstName, lastName, email, phone, address, city, province, postalCode, dateNaissance]
+  );
+
+  // Generation initiale des comptes et transactions (F-19)
+  generateClientFinancials(db, id);
+
+  saveDb();
+  res.status(201).json({ success: true, id });
+}
 
 export async function getAll(req: Request, res: Response) {
   const db = await getDb();

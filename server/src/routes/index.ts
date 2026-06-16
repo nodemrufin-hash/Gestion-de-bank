@@ -12,6 +12,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // --- Clients ---
 router.get("/clients", clients.getAll);
+router.post("/clients", clients.create);
 router.get("/clients/:id", clients.getById);
 router.get("/clients/:id/accounts", clients.getAccounts);
 router.get("/clients/:id/balances", clients.getBalancesByCategory);
