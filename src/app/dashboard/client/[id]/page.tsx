@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { getClient, getClientAccounts, getClientBalances, getGoals, getAlerts } from "@/lib/api";
+import { getClient, getClientAccounts, getClientBalances, getGoals, getAlerts, updateAlert } from "@/lib/api";
 
 const categoryConfig: Record<string, { label: string; color: string }> = {
   depenses: { label: "Dépenses", color: "#3b82f6" },
@@ -20,6 +20,8 @@ export default function ClientPage() {
   const [balances, setBalances] = useState<any[]>([]);
   const [goals, setGoals] = useState<any[]>([]);
   const [alerts, setAlerts] = useState<any[]>([]);
+  const [alertEdits, setAlertEdits] = useState<Record<string, { threshold: string; enabled: boolean }>>({});
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -35,8 +37,25 @@ export default function ClientPage() {
       setBalances(bals);
       setGoals(gs);
       setAlerts(als);
+      const edits: Record<string, { threshold: string; enabled: boolean }> = {};
+      als.forEach((a: any) => { edits[a.id] = { threshold: String(a.threshold), enabled: !!a.enabled }; });
+      setAlertEdits(edits);
     }).catch(console.error);
   }, [id]);
+
+  const handleSaveAlert = async (alertId: string) => {
+    const edit = alertEdits[alertId];
+    const threshold = parseFloat(edit.threshold);
+    if (isNaN(threshold) || threshold < 0) return;
+    try {
+      await updateAlert(alertId, { threshold, enabled: edit.enabled });
+      setAlertMessage("Seuil d'alerte mis à jour.");
+      const als = await getAlerts(id);
+      setAlerts(als);
+    } catch (e: any) {
+      setAlertMessage(`Erreur : ${e.message}`);
+    }
+  };
 
   if (!client) return <div className="text-center py-20 text-slate-400">Chargement...</div>;
 
@@ -166,11 +185,47 @@ export default function ClientPage() {
       {alerts.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Alertes de solde faible</h2>
-          {alerts.map((a: any) => (
-            <div key={a.id} className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
-              Seuil configuré : {a.threshold.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} · {a.enabled ? "Activée" : "Désactivée"}
-            </div>
-          ))}
+          {alertMessage && <p className="text-sm text-emerald-600 bg-emerald-50 px-4 py-2 rounded-lg mb-3">{alertMessage}</p>}
+          <div className="space-y-3">
+            {alerts.map((a: any) => {
+              const acc = accounts.find((ac: any) => ac.id === a.accountId);
+              const edit = alertEdits[a.id] || { threshold: String(a.threshold), enabled: !!a.enabled };
+              return (
+                <div key={a.id} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-wrap items-center gap-4">
+                  <div className="flex-1 min-w-[120px]">
+                    <p className="text-sm font-medium text-slate-900">{acc?.name || "Compte"}</p>
+                    <p className="text-xs text-slate-400">Notifie si le solde descend sous ce seuil</p>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-500 mb-1">Seuil ($)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={edit.threshold}
+                      onChange={(e) => setAlertEdits((prev) => ({ ...prev, [a.id]: { ...edit, threshold: e.target.value } }))}
+                      className="w-32 px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+                    />
+                  </div>
+                  <label className="flex items-center gap-2 text-sm text-slate-700">
+                    <input
+                      type="checkbox"
+                      checked={edit.enabled}
+                      onChange={(e) => setAlertEdits((prev) => ({ ...prev, [a.id]: { ...edit, enabled: e.target.checked } }))}
+                      className="w-4 h-4"
+                    />
+                    Activée
+                  </label>
+                  <button
+                    onClick={() => handleSaveAlert(a.id)}
+                    className="px-4 py-2 bg-brand-800 text-white rounded-lg text-xs font-semibold hover:bg-brand-900 transition-colors"
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
 
