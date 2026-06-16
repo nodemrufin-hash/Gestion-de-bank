@@ -230,7 +230,7 @@ export default function ClientPage() {
       )}
 
       {/* Navigation rapide */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Link
           href={`/dashboard/client/${id}/transfer`}
           className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-brand-300 transition-all"
@@ -258,6 +258,13 @@ export default function ClientPage() {
         >
           <span className="text-2xl">🎯</span>
           <p className="text-sm font-medium text-slate-700 mt-1">Objectifs</p>
+        </Link>
+        <Link
+          href={`/dashboard/client/${id}/products`}
+          className="bg-white rounded-xl border border-slate-200 p-4 text-center hover:border-brand-300 transition-all"
+        >
+          <span className="text-2xl">🏦</span>
+          <p className="text-sm font-medium text-slate-700 mt-1">Produits</p>
         </Link>
       </section>
     </div>
