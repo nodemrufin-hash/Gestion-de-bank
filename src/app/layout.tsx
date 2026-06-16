@@ -37,7 +37,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={`${inter.variable} ${syne.variable}`}>
-      <body className="antialiased bg-white text-slate-900">{children}</body>
+      <body
+        className="antialiased overflow-x-hidden"
+        style={{ backgroundColor: "#ffffff", color: "#081A2E" }}
+      >
+        {children}
+      </body>
     </html>
   );
 }
