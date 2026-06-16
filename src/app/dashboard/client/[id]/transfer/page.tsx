@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getClientAccounts, getBeneficiaries, internalTransfer, interacTransfer, createBeneficiary } from "@/lib/api";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 export default function TransferPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,7 @@ export default function TransferPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // New beneficiary
   const [showNewBenef, setShowNewBenef] = useState(false);
@@ -35,7 +37,7 @@ export default function TransferPage() {
     });
   }, [id]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     setError("");
@@ -43,22 +45,29 @@ export default function TransferPage() {
     const amt = parseFloat(amount);
     if (isNaN(amt) || amt <= 0) { setError("Montant invalide"); return; }
     if (!fromAccountId) { setError("Compte source requis"); return; }
+    if (mode === "interne" && !toAccountId) { setError("Compte destination requis"); return; }
+    if (mode === "interac" && !beneficiaryId) { setError("Bénéficiaire requis"); return; }
 
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = async () => {
+    const amt = parseFloat(amount);
     setLoading(true);
     try {
       if (mode === "interne") {
-        if (!toAccountId) { setError("Compte destination requis"); setLoading(false); return; }
         await internalTransfer({ fromAccountId, toAccountId, amount: amt, description });
         setMessage(`Virement de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`);
       } else {
-        if (!beneficiaryId) { setError("Bénéficiaire requis"); setLoading(false); return; }
         await interacTransfer({ fromAccountId, beneficiaryId, amount: amt, description });
         setMessage(`Virement Interac de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`);
       }
       setAmount("");
       setDescription("");
+      setShowConfirm(false);
     } catch (e: any) {
       setError(e.message);
+      setShowConfirm(false);
     }
     setLoading(false);
   };
@@ -79,6 +88,11 @@ export default function TransferPage() {
 
   const allAccounts = accounts.filter((a) => a.category === "depenses" || a.category === "epargne");
   const chequeAccounts = accounts.filter((a) => a.type === "cheque");
+
+  const fromAccount = accounts.find((a) => a.id === fromAccountId);
+  const toAccount = accounts.find((a) => a.id === toAccountId);
+  const beneficiary = beneficiaries.find((b) => b.id === beneficiaryId);
+  const amt = parseFloat(amount) || 0;
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -215,12 +229,28 @@ export default function TransferPage() {
 
         <button
           type="submit"
-          disabled={loading}
           className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50"
         >
-          {loading ? "Traitement..." : `Effectuer le virement ${mode === "interac" ? "Interac" : "interne"}`}
+          {`Effectuer le virement ${mode === "interac" ? "Interac" : "interne"}`}
         </button>
       </form>
+
+      <ConfirmModal
+        open={showConfirm}
+        title="Confirmer le virement"
+        loading={loading}
+        onConfirm={handleConfirm}
+        onCancel={() => setShowConfirm(false)}
+      >
+        <p>Compte source : <strong>{fromAccount?.name}</strong></p>
+        {mode === "interne" ? (
+          <p>Compte destination : <strong>{toAccount?.name}</strong></p>
+        ) : (
+          <p>Bénéficiaire : <strong>{beneficiary?.name}</strong></p>
+        )}
+        <p>Montant : <strong>{amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</strong></p>
+        {description && <p>Description : {description}</p>}
+      </ConfirmModal>
     </div>
   );
 }
