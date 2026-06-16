@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getClientAccounts, getBeneficiaries, payBill, createBeneficiary } from "@/lib/api";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 export default function BillsPage() {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +16,7 @@ export default function BillsPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [showNew, setShowNew] = useState(false);
   const [newName, setNewName] = useState("");
@@ -28,7 +30,7 @@ export default function BillsPage() {
     });
   }, [id]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     setError("");
@@ -38,13 +40,20 @@ export default function BillsPage() {
     if (!fromAccountId) { setError("Compte source requis"); return; }
     if (!fournisseurId) { setError("Fournisseur requis"); return; }
 
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = async () => {
+    const amt = parseFloat(amount);
     setLoading(true);
     try {
       await payBill({ fromAccountId, fournisseurId, amount: amt });
       setMessage(`Paiement de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`);
       setAmount("");
+      setShowConfirm(false);
     } catch (e: any) {
       setError(e.message);
+      setShowConfirm(false);
     }
     setLoading(false);
   };
@@ -63,6 +72,9 @@ export default function BillsPage() {
   };
 
   const chequeAccounts = accounts.filter((a) => a.type === "cheque");
+  const fromAccount = accounts.find((a) => a.id === fromAccountId);
+  const fournisseur = fournisseurs.find((f) => f.id === fournisseurId);
+  const amt = parseFloat(amount) || 0;
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -136,12 +148,23 @@ export default function BillsPage() {
 
         <button
           type="submit"
-          disabled={loading}
           className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50"
         >
-          {loading ? "Paiement en cours..." : "Payer la facture"}
+          Payer la facture
         </button>
       </form>
+
+      <ConfirmModal
+        open={showConfirm}
+        title="Confirmer le paiement"
+        loading={loading}
+        onConfirm={handleConfirm}
+        onCancel={() => setShowConfirm(false)}
+      >
+        <p>Compte à débiter : <strong>{fromAccount?.name}</strong></p>
+        <p>Fournisseur : <strong>{fournisseur?.name}</strong></p>
+        <p>Montant : <strong>{amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</strong></p>
+      </ConfirmModal>
     </div>
   );
 }
