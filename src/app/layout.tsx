@@ -22,6 +22,12 @@ export const metadata: Metadata = {
   },
   description:
     "Zeph est la néobanque québécoise sans frais cachés. Ouvrez un compte en 2 minutes, gérez votre argent en temps réel.",
+  openGraph: {
+    title: "Zeph — Votre banque numérique",
+    description: "Sans frais cachés. Sans paperasse. Ouverture en 2 minutes.",
+    locale: "fr_CA",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -31,7 +37,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={`${inter.variable} ${syne.variable}`}>
-      <body className="antialiased bg-white text-slate-900">{children}</body>
+      <body
+        className="antialiased overflow-x-hidden"
+        style={{ backgroundColor: "#ffffff", color: "#081A2E" }}
+      >
+        {children}
+      </body>
     </html>
   );
 }

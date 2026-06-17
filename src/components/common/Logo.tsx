@@ -13,13 +13,13 @@ const sizeMap = {
 
 export default function Logo({ variant = "dark", size = "md" }: LogoProps) {
   const { icon, text } = sizeMap[size];
-  const textColor = variant === "dark" ? "text-slate-900" : "text-white";
+  const textColor = variant === "dark" ? "#081A2E" : "#ffffff";
 
   return (
     <Link href="/" className="flex items-center gap-2 group w-fit">
       <div
-        className="rounded-lg bg-brand-800 group-hover:bg-brand-900 transition-colors flex items-center justify-center flex-shrink-0"
-        style={{ width: icon, height: icon }}
+        className="rounded-lg flex items-center justify-center flex-shrink-0 transition-opacity group-hover:opacity-80"
+        style={{ width: icon, height: icon, backgroundColor: "#081A2E" }}
       >
         <svg
           width={icon * 0.5}
@@ -37,8 +37,8 @@ export default function Logo({ variant = "dark", size = "md" }: LogoProps) {
         </svg>
       </div>
       <span
-        className={`font-bold tracking-tight ${text} ${textColor}`}
-        style={{ fontFamily: "var(--font-syne)" }}
+        className={`font-bold tracking-tight ${text}`}
+        style={{ fontFamily: "var(--font-syne)", color: textColor }}
       >
         Zeph
       </span>

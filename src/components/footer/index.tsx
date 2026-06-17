@@ -5,7 +5,7 @@ const links: Record<string, { label: string; href: string }[]> = {
   Produit: [
     { label: "Fonctionnalités", href: "#features" },
     { label: "Sécurité", href: "#securite" },
-    { label: "Tarifs", href: "#tarifs" },
+    { label: "Tarifs", href: "#" },
     { label: "API", href: "#" },
   ],
   Entreprise: [
@@ -62,12 +62,15 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-950 text-slate-400">
-      <div className="max-w-6xl mx-auto px-6 pt-16 pb-8">
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-10 mb-12">
-          <div className="col-span-2 flex flex-col gap-4">
+    <footer style={{ backgroundColor: "#081A2E" }}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 sm:gap-10 mb-10 sm:mb-12">
+          <div className="col-span-2 sm:col-span-3 lg:col-span-2 flex flex-col gap-4">
             <Logo variant="light" size="md" />
-            <p className="text-sm leading-relaxed text-slate-500 max-w-xs">
+            <p
+              className="text-sm leading-relaxed max-w-xs"
+              style={{ color: "#9FB8C9" }}
+            >
               La banque numérique pensée pour les Québécois modernes. Simple,
               rapide, sans frais cachés.
             </p>
@@ -77,7 +80,8 @@ export default function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-brand-800 text-slate-400 hover:text-white flex items-center justify-center transition-all duration-200"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 hover:opacity-80"
+                  style={{ backgroundColor: "#0E2A47", color: "#9FB8C9" }}
                 >
                   {icon}
                 </Link>
@@ -87,14 +91,18 @@ export default function Footer() {
 
           {Object.entries(links).map(([category, items]) => (
             <div key={category} className="flex flex-col gap-3">
-              <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+              <p
+                className="text-xs font-semibold uppercase tracking-widest"
+                style={{ color: "#9FB8C9" }}
+              >
                 {category}
               </p>
               {items.map(({ label, href }) => (
                 <Link
                   key={label}
                   href={href}
-                  className="text-sm text-slate-400 hover:text-brand-300 transition-colors"
+                  className="text-sm transition-colors hover:opacity-80"
+                  style={{ color: "rgba(159,184,201,0.6)" }}
                 >
                   {label}
                 </Link>
@@ -103,11 +111,20 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-slate-600">
+        <div
+          className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3"
+          style={{ borderTop: "1px solid rgba(31,78,107,0.4)" }}
+        >
+          <p
+            className="text-xs text-center sm:text-left"
+            style={{ color: "rgba(159,184,201,0.4)" }}
+          >
             © {year} Zeph Technologies inc. Tous droits réservés.
           </p>
-          <p className="text-xs text-slate-700">
+          <p
+            className="text-xs text-center sm:text-right"
+            style={{ color: "rgba(159,184,201,0.3)" }}
+          >
             Banque fictive · Projet éducatif · Aucun service financier réel
           </p>
         </div>

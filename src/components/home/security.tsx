@@ -20,7 +20,6 @@ const guarantees: Guarantee[] = [
           stroke="currentColor"
           strokeWidth="1.5"
           strokeLinecap="round"
-          strokeLinejoin="round"
         />
       </svg>
     ),
@@ -70,7 +69,6 @@ const guarantees: Guarantee[] = [
           stroke="currentColor"
           strokeWidth="2"
           strokeLinecap="round"
-          strokeLinejoin="round"
         />
         <path
           d="M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"
@@ -87,35 +85,39 @@ export default function Security() {
   return (
     <section
       id="securite"
-      className="py-28 relative overflow-hidden"
-      style={{ backgroundColor: "#0d1b2e" }}
+      className="py-16 sm:py-24 lg:py-28 relative overflow-hidden"
+      style={{ backgroundColor: "#0E2A47" }}
     >
-      {/* Lueurs */}
       <div
-        className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none"
-        style={{ backgroundColor: "rgba(30,58,95,0.4)" }}
+        className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 rounded-full blur-3xl pointer-events-none"
+        style={{ backgroundColor: "rgba(31,78,107,0.3)" }}
       />
       <div
-        className="absolute bottom-0 left-0 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-        style={{ backgroundColor: "rgba(30,58,95,0.2)" }}
+        className="absolute bottom-0 left-0 w-48 sm:w-64 h-48 sm:h-64 rounded-full blur-3xl pointer-events-none"
+        style={{ backgroundColor: "rgba(31,78,107,0.2)" }}
       />
 
-      <div className="relative max-w-6xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Gauche */}
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="flex flex-col gap-8">
             <div>
-              <p className="text-blue-300 text-sm font-semibold uppercase tracking-widest mb-3">
+              <p
+                className="text-sm font-semibold uppercase tracking-widest mb-3"
+                style={{ color: "#9FB8C9" }}
+              >
                 Sécurité
               </p>
               <h2
-                className="text-4xl font-bold text-white leading-tight mb-4"
+                className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4"
                 style={{ fontFamily: "var(--font-syne)" }}
               >
                 Votre argent est protégé.{" "}
-                <span className="text-blue-300">Point.</span>
+                <span style={{ color: "#9FB8C9" }}>Point.</span>
               </h2>
-              <p className="text-slate-400 leading-relaxed text-lg">
+              <p
+                className="leading-relaxed text-base sm:text-lg"
+                style={{ color: "rgba(159,184,201,0.7)" }}
+              >
                 Zeph utilise les mêmes standards de sécurité que les grandes
                 institutions financières — sans la complexité inutile.
               </p>
@@ -124,52 +126,57 @@ export default function Security() {
               {guarantees.map(({ icon, label }) => (
                 <div key={label} className="flex items-center gap-4">
                   <div
-                    className="w-10 h-10 rounded-xl text-blue-300 flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: "rgba(30,58,95,0.6)" }}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{
+                      backgroundColor: "rgba(31,78,107,0.5)",
+                      color: "#9FB8C9",
+                    }}
                   >
                     {icon}
                   </div>
-                  <span className="text-slate-300 font-medium">{label}</span>
+                  <span className="font-medium" style={{ color: "#F2F5F7" }}>
+                    {label}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Droite — shield */}
-          <div className="flex items-center justify-center">
+          {/* Shield — caché sur mobile */}
+          <div className="hidden lg:flex items-center justify-center">
             <div className="relative">
               <div
                 className="w-64 h-64 rounded-full border flex items-center justify-center"
                 style={{
-                  backgroundColor: "rgba(30,58,95,0.2)",
-                  borderColor: "rgba(30,58,95,0.4)",
+                  backgroundColor: "rgba(31,78,107,0.2)",
+                  borderColor: "rgba(31,78,107,0.4)",
                 }}
               >
                 <div
                   className="w-44 h-44 rounded-full border flex items-center justify-center"
                   style={{
-                    backgroundColor: "rgba(30,58,95,0.3)",
-                    borderColor: "rgba(30,58,95,0.5)",
+                    backgroundColor: "rgba(31,78,107,0.3)",
+                    borderColor: "rgba(31,78,107,0.5)",
                   }}
                 >
                   <div
                     className="w-28 h-28 rounded-full border flex items-center justify-center"
                     style={{
-                      backgroundColor: "rgba(30,58,95,0.4)",
-                      borderColor: "rgba(59,130,246,0.4)",
+                      backgroundColor: "rgba(31,78,107,0.4)",
+                      borderColor: "rgba(159,184,201,0.3)",
                     }}
                   >
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
                       <path
                         d="M12 2l7 4v5c0 5-3.5 9-7 10C8.5 20 5 16 5 11V6l7-4z"
-                        stroke="#60a5fa"
+                        stroke="#9FB8C9"
                         strokeWidth="1.5"
                         strokeLinejoin="round"
-                        fill="rgba(30,58,95,0.4)"
+                        fill="rgba(31,78,107,0.4)"
                       />
                       <path
                         d="M9 12l2 2 4-4"
-                        stroke="#60a5fa"
+                        stroke="#9FB8C9"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -178,33 +185,35 @@ export default function Security() {
                   </div>
                 </div>
               </div>
-
-              {/* Badge haut */}
               <div
                 className="absolute -top-2 -right-4 rounded-xl px-4 py-2.5 shadow-xl border"
                 style={{
-                  backgroundColor: "#0d1b2e",
-                  borderColor: "rgba(30,58,95,0.7)",
+                  backgroundColor: "#081A2E",
+                  borderColor: "rgba(31,78,107,0.6)",
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                  <div
+                    className="w-2 h-2 rounded-full animate-pulse"
+                    style={{ backgroundColor: "#9FB8C9" }}
+                  />
                   <span className="text-white text-xs font-semibold">
                     Connexion sécurisée
                   </span>
                 </div>
               </div>
-
-              {/* Badge bas */}
               <div
                 className="absolute -bottom-2 -left-4 rounded-xl px-4 py-2.5 shadow-xl border"
                 style={{
-                  backgroundColor: "#0d1b2e",
-                  borderColor: "rgba(30,58,95,0.7)",
+                  backgroundColor: "#081A2E",
+                  borderColor: "rgba(31,78,107,0.6)",
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-400" />
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: "#9FB8C9" }}
+                  />
                   <span className="text-white text-xs font-semibold">
                     SSL 256-bit
                   </span>
