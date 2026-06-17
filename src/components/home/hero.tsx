@@ -70,7 +70,7 @@ export default function Hero() {
       <div className="w-full lg:w-[55%] flex items-center px-6 lg:px-0 lg:pr-8">
         <div className="relative w-full h-[550px] rounded-2xl overflow-hidden">
           <Image
-            src="/imgHero2.webp"
+            src="/imgHero4.webp"
             alt="Zeph banque numérique"
             fill
             priority
