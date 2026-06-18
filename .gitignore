@@ -27,7 +27,7 @@ server/dist
 .DS_Store
 *.pem
 
-# config locale d'editeur / outils
+# config locale d'editeur
 .vscode/
 
 # debug
