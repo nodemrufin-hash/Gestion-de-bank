@@ -40,7 +40,7 @@ export default function Logo({ variant = "dark", size = "md" }: LogoProps) {
         className={`font-bold tracking-tight ${text}`}
         style={{ fontFamily: "var(--font-syne)", color: textColor }}
       >
-        Zeph
+        Libéo
       </span>
     </Link>
   );

@@ -42,7 +42,7 @@ export default function Hero() {
           className="text-base lg:text-lg leading-relaxed mb-10 max-w-md"
           style={{ color: "#9FB8C9" }}
         >
-          Zeph vous donne le contrôle total sur vos finances — sans frais
+          Libéo vous donne le contrôle total sur vos finances — sans frais
           surprises, sans paperasse, sans attente.
         </p>
 
@@ -71,7 +71,7 @@ export default function Hero() {
         <div className="relative w-full h-[550px] rounded-2xl overflow-hidden">
           <Image
             src="/imgHero4.webp"
-            alt="Zeph banque numérique"
+            alt="Libéo banque numérique"
             fill
             priority
             className="object-cover object-center"

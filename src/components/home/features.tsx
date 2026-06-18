@@ -120,7 +120,7 @@ const features: Feature[] = [
       </svg>
     ),
     title: "Intégrations intelligentes",
-    description: "Connectez Zeph à vos outils — comptabilité, fiscalité, REER.",
+    description: "Connectez Libéo à vos outils — comptabilité, fiscalité, REER.",
   },
 ];
 

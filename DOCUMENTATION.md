@@ -1,4 +1,4 @@
-# Documentation technique — Gestion d'une banque (Zeph)
+# Documentation technique — Gestion d'une banque (Libéo)
 
 Application **web de simulation bancaire** développée dans un cadre académique.
 Elle permet de gérer des **profils clients fictifs**, leurs **comptes** et des
@@ -216,7 +216,7 @@ lisent/modifient la base et renvoient une réponse JSON.
 | Fichier | Rôle |
 |---------|------|
 | `common/Button.tsx` | Bouton standard. S'il reçoit un `href`, il devient un lien (`Link`) ; sinon un `<button>`. Gère les variantes de style et les tailles. |
-| `common/Logo.tsx` | Logo « Zeph » cliquable (renvoie à l'accueil). |
+| `common/Logo.tsx` | Logo « Libéo » cliquable (renvoie à l'accueil). |
 | `common/ConfirmModal.tsx` | Fenêtre de **confirmation** affichée avant toute opération financière (virement, paiement, dépôt…). |
 | `header/index.tsx` | En-tête du site public (enveloppe la barre de navigation). |
 | `header/navbar.tsx` | Barre de navigation publique (liens + boutons « Connexion » et « Ouvrir un compte », menu mobile). |

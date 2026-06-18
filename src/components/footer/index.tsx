@@ -119,7 +119,7 @@ export default function Footer() {
             className="text-xs text-center sm:text-left"
             style={{ color: "rgba(159,184,201,0.4)" }}
           >
-            © {year} Zeph Technologies inc. Tous droits réservés.
+            © {year} Libéo Technologies inc. Tous droits réservés.
           </p>
           <p
             className="text-xs text-center sm:text-right"

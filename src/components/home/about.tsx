@@ -21,7 +21,7 @@ export default function About() {
             </h2>
             <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
-                Zeph est née d'une idée simple : la gestion de l'argent devrait
+                Libéo est née d'une idée simple : la gestion de l'argent devrait
                 être claire, rapide et sans mauvaises surprises. Nous avons
                 construit une banque entièrement numérique qui met le contrôle
                 entre les mains de ses clients.

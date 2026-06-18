@@ -17,13 +17,13 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   title: {
-    default: "Zeph — Votre banque numérique",
-    template: "%s | Zeph",
+    default: "Libéo — Votre banque numérique",
+    template: "%s | Libéo",
   },
   description:
-    "Zeph est la néobanque québécoise sans frais cachés. Ouvrez un compte en 2 minutes, gérez votre argent en temps réel.",
+    "Libéo est la néobanque québécoise sans frais cachés. Ouvrez un compte en 2 minutes, gérez votre argent en temps réel.",
   openGraph: {
-    title: "Zeph — Votre banque numérique",
+    title: "Libéo — Votre banque numérique",
     description: "Sans frais cachés. Sans paperasse. Ouverture en 2 minutes.",
     locale: "fr_CA",
     type: "website",

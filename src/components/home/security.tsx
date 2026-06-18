@@ -118,7 +118,7 @@ export default function Security() {
                 className="leading-relaxed text-base sm:text-lg"
                 style={{ color: "rgba(159,184,201,0.7)" }}
               >
-                Zeph utilise les mêmes standards de sécurité que les grandes
+                Libéo utilise les mêmes standards de sécurité que les grandes
                 institutions financières — sans la complexité inutile.
               </p>
             </div>

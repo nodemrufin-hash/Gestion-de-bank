@@ -54,7 +54,7 @@ export function generateClientFinancials(db: Database, clientId: string): void {
   const accountIds: string[] = [];
   for (const acc of accountDefs) {
     const accId = uuid();
-    const accNum = `ZEPH-${String(Math.floor(10000 + Math.random() * 90000))}-${String(Math.floor(100 + Math.random() * 900))}`;
+    const accNum = `LIBEO-${String(Math.floor(10000 + Math.random() * 90000))}-${String(Math.floor(100 + Math.random() * 900))}`;
     db.run(
       `INSERT INTO accounts (id, clientId, type, category, name, balance, accountNumber, creditLimit, interestRate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [accId, clientId, acc.type, acc.category, acc.name, acc.balance, accNum, acc.creditLimit, acc.interestRate || 0]
