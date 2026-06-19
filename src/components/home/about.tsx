@@ -50,7 +50,7 @@ export default function About() {
           </div>
         </div>
 
-        <div className="relative h-72 sm:h-96 w-full lg:h-auto lg:w-5/12 lg:mx-8">
+        <div className="relative h-72 sm:h-96 w-full lg:h-auto lg:w-5/12 lg:mx-16">
           <Image
             src="/forest5.webp"
             alt="forest"
