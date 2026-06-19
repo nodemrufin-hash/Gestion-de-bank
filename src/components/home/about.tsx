@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const stats = [
   { value: "2021", label: "Année de fondation" },
   { value: "100 %", label: "Numérique" },
@@ -6,7 +8,11 @@ const stats = [
 
 export default function About() {
   return (
-    <section id="apropos" className="py-28" style={{ backgroundColor: "#EDE8D0" }}>
+    <section
+      id="apropos"
+      className="py-28"
+      style={{ backgroundColor: "#EDE8D0" }}
+    >
       <div className="max-w-5xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
@@ -31,6 +37,18 @@ export default function About() {
                 seulement les outils dont vous avez besoin pour épargner,
                 dépenser et planifier en toute confiance.
               </p>
+            </div>
+          </div>
+
+          <div className="w-full flex items-center px-6 lg:px-0 lg:pr-8">
+            <div className="relative w-full h-[550px] rounded-md overflow-hidden">
+              <Image
+                src="/forest1.webp"
+                alt="forest"
+                fill
+                priority
+                className="object-cover object-center"
+              />
             </div>
           </div>
 
