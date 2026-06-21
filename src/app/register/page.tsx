@@ -1,59 +1,69 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
 import Logo from "@/components/common/Logo";
 import { createClient } from "@/lib/api";
+import { useState } from "react";
 
-const PROVINCES = ["QC", "ON", "BC", "AB", "MB", "SK", "NS", "NB", "NL", "PE", "YT", "NT", "NU"];
+const PROVINCES = [
+  "QC",
+  "ON",
+  "BC",
+  "AB",
+  "MB",
+  "SK",
+  "NS",
+  "NB",
+  "NL",
+  "PE",
+  "YT",
+  "NT",
+  "NU",
+];
 
-const initialForm = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  address: "",
-  city: "",
-  province: "QC",
-  postalCode: "",
-  dateNaissance: "",
+type FormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  province: string;
+  postalCode: string;
+  dateNaissance: string;
 };
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [form, setForm] = useState(initialForm);
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
 
-  const update = (field: keyof typeof initialForm, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: "" }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    mode: "onBlur",
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      address: "",
+      city: "",
+      province: "QC",
+      postalCode: "",
+      dateNaissance: "",
+    },
+  });
 
-  const validate = (): boolean => {
-    const next: Record<string, string> = {};
-    if (!form.firstName.trim()) next.firstName = "Prénom requis.";
-    if (!form.lastName.trim()) next.lastName = "Nom requis.";
-    if (!form.email.trim()) next.email = "Courriel requis.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) next.email = "Courriel invalide.";
-    if (!form.phone.trim()) next.phone = "Téléphone requis.";
-    if (!form.address.trim()) next.address = "Adresse requise.";
-    if (!form.city.trim()) next.city = "Ville requise.";
-    if (!form.postalCode.trim()) next.postalCode = "Code postal requis.";
-    if (!form.dateNaissance.trim()) next.dateNaissance = "Date de naissance requise.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormData) => {
     setServerError("");
-    if (!validate()) return;
     setSubmitting(true);
     try {
-      const { id } = await createClient(form);
+      const { id } = await createClient(data);
       router.push(`/dashboard/client/${id}`);
     } catch (err: any) {
       setServerError(err.message || "Une erreur est survenue.");
@@ -61,13 +71,18 @@ export default function RegisterPage() {
     }
   };
 
-  const fieldClass = (field: string) =>
+  const fieldClass = (hasError: boolean) =>
     `w-full px-4 py-2.5 rounded-xl border outline-none transition-colors focus:ring-2 focus:ring-brand-100 ${
-      errors[field] ? "border-red-400 focus:border-red-400" : "border-slate-200 focus:border-brand-400"
+      hasError
+        ? "border-red-400 focus:border-red-400"
+        : "border-slate-200 focus:border-brand-400"
     }`;
 
   return (
-    <main className="min-h-screen flex flex-col" style={{ backgroundColor: "#EDE8D0" }}>
+    <main
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: "#EDE8D0" }}
+    >
       <header className="px-6 py-5">
         <Logo variant="dark" size="md" />
       </header>
@@ -75,7 +90,10 @@ export default function RegisterPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-xl bg-white rounded-3xl shadow-sm border border-white/60 p-8 sm:p-10">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>
+            <h1
+              className="text-3xl font-bold text-slate-900"
+              style={{ fontFamily: "var(--font-syne)" }}
+            >
               Ouvrir un compte
             </h1>
             <p className="text-slate-500 mt-2 text-sm">
@@ -83,68 +101,187 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            className="space-y-4"
+          >
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Prénom</label>
-                <input type="text" value={form.firstName} onChange={(e) => update("firstName", e.target.value)} className={fieldClass("firstName")} placeholder="Alice" />
-                {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Prénom
+                </label>
+                <input
+                  type="text"
+                  placeholder="Alice"
+                  className={fieldClass(!!errors.firstName)}
+                  {...register("firstName", { required: "Prénom requis." })}
+                />
+                {errors.firstName && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.firstName.message}
+                  </p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Nom</label>
-                <input type="text" value={form.lastName} onChange={(e) => update("lastName", e.target.value)} className={fieldClass("lastName")} placeholder="Tremblay" />
-                {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Nom
+                </label>
+                <input
+                  type="text"
+                  placeholder="Tremblay"
+                  className={fieldClass(!!errors.lastName)}
+                  {...register("lastName", { required: "Nom requis." })}
+                />
+                {errors.lastName && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.lastName.message}
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Courriel</label>
-                <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className={fieldClass("email")} placeholder="alice@email.ca" />
-                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Courriel
+                </label>
+                <input
+                  type="email"
+                  placeholder="alice@email.ca"
+                  className={fieldClass(!!errors.email)}
+                  {...register("email", {
+                    required: "Courriel requis.",
+                    pattern: {
+                      value:
+                        /^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+\.[a-zA-Z]{2,}$/,
+                      message: "Courriel invalide.",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Téléphone</label>
-                <input type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} className={fieldClass("phone")} placeholder="514-555-0101" />
-                {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Téléphone
+                </label>
+                <input
+                  type="tel"
+                  placeholder="514-555-0101"
+                  className={fieldClass(!!errors.phone)}
+                  {...register("phone", {
+                    required: "Téléphone requis.",
+                    pattern: {
+                      value: /^(\(\d{3}\)\s?|\d{3}[-.\s]?)\d{3}[-.\s]?\d{4}$/,
+                      message:
+                        "Format invalide (ex: 514-555-0101 ou (514) 555-0101).",
+                    },
+                  })}
+                />
+                {errors.phone && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.phone.message}
+                  </p>
+                )}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Adresse</label>
-              <input type="text" value={form.address} onChange={(e) => update("address", e.target.value)} className={fieldClass("address")} placeholder="123 Rue Saint-Jacques" />
-              {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Adresse
+              </label>
+              <input
+                type="text"
+                placeholder="123 Rue Saint-Jacques"
+                className={fieldClass(!!errors.address)}
+                {...register("address", { required: "Adresse requise." })}
+              />
+              {errors.address && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.address.message}
+                </p>
+              )}
             </div>
 
             <div className="grid sm:grid-cols-3 gap-4">
               <div className="sm:col-span-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Ville</label>
-                <input type="text" value={form.city} onChange={(e) => update("city", e.target.value)} className={fieldClass("city")} placeholder="Montréal" />
-                {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Ville
+                </label>
+                <input
+                  type="text"
+                  placeholder="Montréal"
+                  className={fieldClass(!!errors.city)}
+                  {...register("city", { required: "Ville requise." })}
+                />
+                {errors.city && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.city.message}
+                  </p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Province</label>
-                <select value={form.province} onChange={(e) => update("province", e.target.value)} className={fieldClass("province")}>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Province
+                </label>
+                <select className={fieldClass(false)} {...register("province")}>
                   {PROVINCES.map((p) => (
-                    <option key={p} value={p}>{p}</option>
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Code postal</label>
-                <input type="text" value={form.postalCode} onChange={(e) => update("postalCode", e.target.value)} className={fieldClass("postalCode")} placeholder="H2Y 1L9" />
-                {errors.postalCode && <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>}
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Code postal
+                </label>
+                <input
+                  type="text"
+                  placeholder="H2Y 1L9"
+                  className={fieldClass(!!errors.postalCode)}
+                  {...register("postalCode", {
+                    required: "Code postal requis.",
+                    pattern: {
+                      value: /^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/,
+                      message: "Format invalide (ex: H2Y 1L9).",
+                    },
+                  })}
+                />
+                {errors.postalCode && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.postalCode.message}
+                  </p>
+                )}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Date de naissance</label>
-              <input type="date" value={form.dateNaissance} onChange={(e) => update("dateNaissance", e.target.value)} className={fieldClass("dateNaissance")} />
-              {errors.dateNaissance && <p className="text-xs text-red-500 mt-1">{errors.dateNaissance}</p>}
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Date de naissance
+              </label>
+              <input
+                type="date"
+                className={fieldClass(!!errors.dateNaissance)}
+                {...register("dateNaissance", {
+                  required: "Date de naissance requise.",
+                })}
+              />
+              {errors.dateNaissance && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.dateNaissance.message}
+                </p>
+              )}
             </div>
 
             {serverError && (
-              <p className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-xl px-4 py-3">{serverError}</p>
+              <p className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                {serverError}
+              </p>
             )}
 
             <button
@@ -158,7 +295,10 @@ export default function RegisterPage() {
 
           <p className="text-center text-sm text-slate-500 mt-6">
             Vous avez déjà un profil ?{" "}
-            <Link href="/login" className="font-semibold text-brand-800 hover:text-brand-900">
+            <Link
+              href="/login"
+              className="font-semibold text-brand-800 hover:text-brand-900"
+            >
               Se connecter
             </Link>
           </p>
