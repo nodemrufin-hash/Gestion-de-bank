@@ -1,11 +1,21 @@
+/**
+ * Génération des données fictives (seed).
+ *
+ * Crée les clients de démonstration, leurs comptes, transactions (passées,
+ * futures et récurrentes), bénéficiaires, objectifs d'épargne, alertes et les
+ * paramètres globaux. `generateClientFinancials` est aussi réutilisé lors de la
+ * création d'un nouveau client.
+ */
 import { v4 as uuid } from "uuid";
 import type { Database } from "sql.js";
 import { getDb, saveDb } from "./database";
 
+/** Renvoie un montant aléatoire entre `min` et `max`, arrondi à 2 décimales. */
 function randomAmount(min: number, max: number): number {
   return Math.round((Math.random() * (max - min) + min) * 100) / 100;
 }
 
+/** Renvoie une date passée aléatoire (jusqu'à `startMonthsAgo` mois en arrière), format AAAA-MM-JJ. */
 function randomDate(startMonthsAgo: number): string {
   const d = new Date();
   d.setMonth(d.getMonth() - Math.floor(Math.random() * startMonthsAgo));
@@ -13,6 +23,7 @@ function randomDate(startMonthsAgo: number): string {
   return d.toISOString().split("T")[0];
 }
 
+/** Renvoie une date future à `daysAhead` jours, format AAAA-MM-JJ. */
 function futureDate(daysAhead: number): string {
   const d = new Date();
   d.setDate(d.getDate() + daysAhead);
@@ -128,6 +139,11 @@ export function generateClientFinancials(db: Database, clientId: string): void {
   );
 }
 
+/**
+ * Initialise la base avec les données de démonstration si elle est vide :
+ * 5 clients et leurs finances, plus les paramètres globaux. Ne fait rien si des
+ * clients existent déjà (idempotent).
+ */
 export async function seed(): Promise<void> {
   const db = await getDb();
 

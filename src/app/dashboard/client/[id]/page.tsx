@@ -1,5 +1,12 @@
 "use client";
 
+/**
+ * Page profil d'un client.
+ *
+ * Affiche les informations du client, ses soldes par catégorie, la liste de ses
+ * comptes, ses objectifs d'épargne et ses alertes de solde faible (modifiables).
+ * Propose aussi des raccourcis vers les opérations (virement, factures, etc.).
+ */
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -12,6 +19,7 @@ const categoryConfig: Record<string, { label: string; color: string }> = {
   investissement: { label: "Investissement", color: "#8b5cf6" },
 };
 
+/** Composant de la page profil client (vue d'ensemble des comptes et opérations). */
 export default function ClientPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();

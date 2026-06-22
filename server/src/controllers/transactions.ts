@@ -1,7 +1,20 @@
+/**
+ * Contrôleur des transactions et opérations bancaires.
+ *
+ * Regroupe la consultation des transactions (historique, futures, récurrentes)
+ * et les opérations qui modifient les soldes : virement interne, virement
+ * Interac, paiement de facture, dépôt, retrait et dépôt de chèque. Chaque
+ * opération valide le montant et le solde avant d'écrire en base.
+ */
 import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
 
+/**
+ * Renvoie l'historique des transactions complétées d'un compte (100 plus récentes).
+ * @param req `params.accountId` : identifiant du compte.
+ * @param res Tableau JSON des transactions (hors transactions futures).
+ */
 export async function getByAccount(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare(
@@ -14,6 +27,11 @@ export async function getByAccount(req: Request, res: Response) {
   res.json(txs);
 }
 
+/**
+ * Renvoie les transactions futures (planifiées) d'un compte, triées par date prévue.
+ * @param req `params.accountId` : identifiant du compte.
+ * @param res Tableau JSON des transactions à venir.
+ */
 export async function getFuture(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare(
@@ -26,6 +44,11 @@ export async function getFuture(req: Request, res: Response) {
   res.json(txs);
 }
 
+/**
+ * Renvoie les transactions récurrentes d'un compte.
+ * @param req `params.accountId` : identifiant du compte.
+ * @param res Tableau JSON des transactions récurrentes.
+ */
 export async function getRecurring(req: Request, res: Response) {
   const db = await getDb();
   const accountId = req.params.accountId as string;
@@ -39,6 +62,13 @@ export async function getRecurring(req: Request, res: Response) {
   res.json(txs);
 }
 
+/**
+ * Effectue un virement interne entre deux comptes du même client : débite la
+ * source, crédite la destination et enregistre les deux transactions liées.
+ * @param req Corps : `{ fromAccountId, toAccountId, amount, description? }`.
+ * @param res `{ success, transactionId }`, ou 400/404 (montant invalide,
+ *            solde insuffisant, compte introuvable).
+ */
 export async function internalTransfer(req: Request, res: Response) {
   const db = await getDb();
   const { fromAccountId, toAccountId, amount, description } = req.body;
@@ -91,6 +121,13 @@ export async function internalTransfer(req: Request, res: Response) {
   res.json({ success: true, transactionId: txFrom });
 }
 
+/**
+ * Effectue un virement Interac vers un bénéficiaire : débite le compte source
+ * et enregistre la transaction sortante.
+ * @param req Corps : `{ fromAccountId, beneficiaryId, amount, description? }`.
+ * @param res `{ success, transactionId }`, ou 400/404 (montant invalide,
+ *            solde insuffisant, bénéficiaire introuvable).
+ */
 export async function interacTransfer(req: Request, res: Response) {
   const db = await getDb();
   const { fromAccountId, beneficiaryId, amount, description } = req.body;
@@ -132,6 +169,13 @@ export async function interacTransfer(req: Request, res: Response) {
   res.json({ success: true, transactionId: txId });
 }
 
+/**
+ * Paie une facture auprès d'un fournisseur : débite le compte source et
+ * enregistre la transaction (catégorie « dépenses »).
+ * @param req Corps : `{ fromAccountId, fournisseurId, amount }`.
+ * @param res `{ success, transactionId }`, ou 400/404 (montant invalide,
+ *            solde insuffisant, fournisseur introuvable).
+ */
 export async function payBill(req: Request, res: Response) {
   const db = await getDb();
   const { fromAccountId, fournisseurId, amount } = req.body;
@@ -173,6 +217,11 @@ export async function payBill(req: Request, res: Response) {
   res.json({ success: true, transactionId: txId });
 }
 
+/**
+ * Effectue un dépôt sur un compte : crédite le solde et enregistre la transaction.
+ * @param req Corps : `{ accountId, amount, description? }`.
+ * @param res `{ success, transactionId }`, ou 400/404 (montant invalide, compte introuvable).
+ */
 export async function deposit(req: Request, res: Response) {
   const db = await getDb();
   const { accountId, amount, description } = req.body;
@@ -203,6 +252,12 @@ export async function deposit(req: Request, res: Response) {
   res.json({ success: true, transactionId: txId });
 }
 
+/**
+ * Effectue un retrait sur un compte : débite le solde après vérification des fonds.
+ * @param req Corps : `{ accountId, amount, description? }`.
+ * @param res `{ success, transactionId }`, ou 400/404 (montant invalide,
+ *            solde insuffisant, compte introuvable).
+ */
 export async function withdraw(req: Request, res: Response) {
   const db = await getDb();
   const { accountId, amount, description } = req.body;
@@ -238,6 +293,12 @@ export async function withdraw(req: Request, res: Response) {
   res.json({ success: true, transactionId: txId });
 }
 
+/**
+ * Effectue un dépôt de chèque avec photo (envoyée en multipart, stockée en BLOB).
+ * Crédite le compte et enregistre la transaction.
+ * @param req Corps : `{ accountId, amount, description? }` + fichier `chequeImage`.
+ * @param res `{ success, transactionId }`, ou 400/404 (montant invalide, compte introuvable).
+ */
 export async function depositCheque(req: Request, res: Response) {
   const db = await getDb();
   const { accountId, amount, description } = req.body;

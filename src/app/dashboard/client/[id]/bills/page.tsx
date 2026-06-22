@@ -1,11 +1,18 @@
 "use client";
 
+/**
+ * Page de paiement de factures.
+ *
+ * Permet de payer un fournisseur depuis un compte chèques (avec ajout d'un
+ * fournisseur à la volée) et confirme l'opération via une fenêtre modale.
+ */
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getClientAccounts, getBeneficiaries, payBill, createBeneficiary } from "@/lib/api";
 import ConfirmModal from "@/components/common/ConfirmModal";
 
+/** Composant de la page de paiement de factures. */
 export default function BillsPage() {
   const { id } = useParams<{ id: string }>();
   const [accounts, setAccounts] = useState<any[]>([]);

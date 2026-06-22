@@ -1,3 +1,11 @@
+/**
+ * Schéma SQL de la base de données.
+ *
+ * Définit les tables (clients, comptes, transactions, bénéficiaires, objectifs
+ * d'épargne, paramètres, alertes de solde faible), leurs contraintes
+ * (clés primaires/étrangères, CHECK sur les types) et les index. Exécuté au
+ * démarrage via `getDb` ; les `IF NOT EXISTS` rendent l'opération idempotente.
+ */
 export const SCHEMA = `
 CREATE TABLE IF NOT EXISTS clients (
   id TEXT PRIMARY KEY,

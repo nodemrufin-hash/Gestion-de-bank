@@ -1,9 +1,16 @@
 "use client";
 
+/**
+ * Tableau de bord principal.
+ *
+ * Liste tous les profils clients sous forme de cartes ; cliquer sur une carte
+ * ouvre la page détaillée du client (comptes et opérations).
+ */
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getClients } from "@/lib/api";
 
+/** Composant du tableau de bord (grille des profils clients). */
 export default function DashboardPage() {
   const [clients, setClients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

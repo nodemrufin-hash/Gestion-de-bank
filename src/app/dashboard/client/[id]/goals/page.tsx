@@ -1,10 +1,17 @@
 "use client";
 
+/**
+ * Page des objectifs d'épargne.
+ *
+ * Liste les objectifs du client avec leur barre de progression, permet d'en
+ * créer de nouveaux et d'ajouter un montant à la progression d'un objectif.
+ */
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getGoals, createGoal, updateGoalProgress, getClientAccounts } from "@/lib/api";
 
+/** Composant de la page des objectifs d'épargne. */
 export default function GoalsPage() {
   const { id } = useParams<{ id: string }>();
   const [goals, setGoals] = useState<any[]>([]);

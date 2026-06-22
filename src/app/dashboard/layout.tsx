@@ -1,10 +1,20 @@
 "use client";
 
+/**
+ * Layout commun à toutes les pages du tableau de bord.
+ *
+ * Fournit la barre supérieure, la barre latérale de navigation (repliable sur
+ * mobile/tablette) et la zone de contenu qui affiche la page courante.
+ */
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import Logo from "@/components/common/Logo";
 
+/**
+ * Layout du dashboard.
+ * @param children Contenu de la page courante rendu dans la zone principale.
+ */
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();

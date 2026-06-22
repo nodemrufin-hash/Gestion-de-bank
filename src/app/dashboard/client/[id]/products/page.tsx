@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Page des produits financiers.
+ *
+ * Présente la liste des produits offerts (comptes, placements, emprunts) avec
+ * leur description ; les taux affichés proviennent des paramètres globaux.
+ */
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -69,6 +75,7 @@ const PRODUCTS: Product[] = [
   },
 ];
 
+/** Composant de la page des produits financiers disponibles. */
 export default function ProductsPage() {
   const { id } = useParams<{ id: string }>();
   const [parameters, setParameters] = useState<any[]>([]);

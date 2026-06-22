@@ -1,10 +1,18 @@
 "use client";
 
+/**
+ * Page de connexion.
+ *
+ * Affiche la liste des profils clients (chargée depuis l'API) ; l'utilisateur
+ * sélectionne un profil pour accéder à son tableau de bord. Pas
+ * d'authentification réelle : il s'agit d'une simulation.
+ */
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/common/Logo";
 import { getClients } from "@/lib/api";
 
+/** Composant de la page de connexion (sélection d'un profil client). */
 export default function LoginPage() {
   const [clients, setClients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

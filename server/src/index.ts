@@ -1,3 +1,10 @@
+/**
+ * Point d'entrée du serveur Express.
+ *
+ * Configure les middlewares (CORS, parsing JSON/urlencoded), monte les routes
+ * de l'API sous `/api`, sert le build du frontend en production, puis démarre
+ * l'écoute HTTP et initialise la base de données.
+ */
 import express from "express";
 import cors from "cors";
 import path from "path";
@@ -23,6 +30,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+/** Initialise (ou charge) la base de données au démarrage du serveur. */
 async function start() {
   await getDb();
   console.log(`Serveur démarré sur http://localhost:${PORT}`);

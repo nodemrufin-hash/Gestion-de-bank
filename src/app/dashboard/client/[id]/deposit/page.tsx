@@ -1,11 +1,18 @@
 "use client";
 
+/**
+ * Page de dépôt / retrait.
+ *
+ * Trois modes : dépôt, retrait, ou dépôt de chèque (avec photo). Le compte et le
+ * montant sont saisis puis l'opération est confirmée via une fenêtre modale.
+ */
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getClientAccounts, deposit, withdraw, depositCheque } from "@/lib/api";
 import ConfirmModal from "@/components/common/ConfirmModal";
 
+/** Composant de la page dépôt / retrait / dépôt de chèque. */
 export default function DepositPage() {
   const { id } = useParams<{ id: string }>();
   const [accounts, setAccounts] = useState<any[]>([]);

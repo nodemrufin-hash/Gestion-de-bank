@@ -1,5 +1,20 @@
+/**
+ * Client HTTP de l'application (frontend → API Express).
+ *
+ * Centralise l'URL de base de l'API et expose une fonction typée par domaine
+ * (clients, transactions, opérations, bénéficiaires, objectifs, alertes, admin)
+ * au-dessus du helper `request`. L'URL est configurable via
+ * `NEXT_PUBLIC_API_URL`, avec repli sur `http://localhost:3001/api`.
+ */
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 
+/**
+ * Helper générique d'appel à l'API : sérialise/parse le JSON et gère les erreurs.
+ * @param path Chemin relatif à `BASE_URL` (ex: `/clients`).
+ * @param options Options `fetch` (méthode, corps, en-têtes…).
+ * @returns La réponse JSON typée `T`.
+ * @throws Error avec le message d'erreur du serveur si la réponse n'est pas 2xx.
+ */
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: { "Content-Type": "application/json", ...options?.headers },

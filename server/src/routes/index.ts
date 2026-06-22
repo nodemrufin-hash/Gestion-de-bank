@@ -1,3 +1,10 @@
+/**
+ * Définition des routes de l'API REST (préfixe `/api`).
+ *
+ * Associe chaque endpoint HTTP à son handler de contrôleur : clients, comptes,
+ * transactions/opérations, bénéficiaires, objectifs, alertes, administration et
+ * cartes de crédit. `multer` gère l'upload de la photo de chèque en mémoire.
+ */
 import { Router } from "express";
 import multer from "multer";
 import * as clients from "../controllers/clients";
@@ -52,6 +59,7 @@ router.put("/admin/parameters", admin.updateParameter);
 router.post("/admin/reset", admin.resetAll);
 
 // --- Credit card ---
+/** GET /accounts/:accountId — renvoie un compte par son identifiant (404 sinon). */
 router.get("/accounts/:accountId", async (req, res) => {
   const { getDb } = await import("../database/database");
   const db = await getDb();
@@ -65,6 +73,11 @@ router.get("/accounts/:accountId", async (req, res) => {
   stmt.free();
 });
 
+/**
+ * POST /accounts/:accountId/pay-credit — paie (partiellement) une carte de
+ * crédit depuis un compte chèques : débite la source, réduit la dette de la
+ * carte et enregistre les deux transactions. 400/404 en cas d'erreur.
+ */
 router.post("/accounts/:accountId/pay-credit", async (req, res) => {
   const { getDb, saveDb } = await import("../database/database");
   const { v4: uuid } = await import("uuid");

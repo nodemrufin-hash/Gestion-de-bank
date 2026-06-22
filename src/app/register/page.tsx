@@ -1,5 +1,12 @@
 "use client";
 
+/**
+ * Page d'ouverture de compte (création d'un profil client).
+ *
+ * Formulaire validé côté client avec react-hook-form (champs requis, formats
+ * courriel / téléphone / code postal). À la soumission, crée le client via
+ * l'API puis redirige vers son tableau de bord.
+ */
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -35,6 +42,7 @@ type FormData = {
   dateNaissance: string;
 };
 
+/** Composant de la page d'inscription (formulaire de création de client). */
 export default function RegisterPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);

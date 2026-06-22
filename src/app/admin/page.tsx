@@ -1,10 +1,17 @@
 "use client";
 
+/**
+ * Page d'administration.
+ *
+ * Permet de modifier les paramètres globaux de la banque, de réinitialiser un
+ * profil client individuel, et de réinitialiser l'ensemble des données.
+ */
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getParameters, updateParameter, resetAllData, getClients, resetClient } from "@/lib/api";
 
+/** Composant de la page d'administration (paramètres globaux et réinitialisations). */
 export default function AdminPage() {
   const router = useRouter();
   const [parameters, setParameters] = useState<any[]>([]);

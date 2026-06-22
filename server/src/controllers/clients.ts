@@ -1,3 +1,10 @@
+/**
+ * Contrôleur des clients.
+ *
+ * Gère les profils clients : création (avec génération automatique des comptes
+ * et transactions initiales), consultation, liste, soldes par catégorie et
+ * réinitialisation. Chaque handler reçoit/renvoie du JSON via Express.
+ */
 import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
@@ -15,6 +22,12 @@ const REQUIRED_FIELDS = [
   "dateNaissance",
 ] as const;
 
+/**
+ * Crée un nouveau client puis génère ses comptes, transactions, bénéficiaires,
+ * objectifs et alerte de solde faible (F-01 / F-19).
+ * @param req Corps attendu : tous les champs de REQUIRED_FIELDS + email valide.
+ * @param res 201 avec `{ success, id }`, ou 400 si un champ est manquant/invalide.
+ */
 export async function create(req: Request, res: Response) {
   const db = await getDb();
 
@@ -48,6 +61,10 @@ export async function create(req: Request, res: Response) {
   res.status(201).json({ success: true, id });
 }
 
+/**
+ * Renvoie la liste de tous les clients, triés par nom puis prénom.
+ * @param res Tableau JSON de clients (objet aplati par colonne).
+ */
 export async function getAll(req: Request, res: Response) {
   const db = await getDb();
   const clients = db.exec("SELECT * FROM clients ORDER BY lastName, firstName");
@@ -58,6 +75,11 @@ export async function getAll(req: Request, res: Response) {
   res.json(rows);
 }
 
+/**
+ * Renvoie un client par son identifiant.
+ * @param req `params.id` : identifiant du client.
+ * @param res Le client en JSON, ou 404 s'il n'existe pas.
+ */
 export async function getById(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare("SELECT * FROM clients WHERE id = ?");
@@ -71,6 +93,11 @@ export async function getById(req: Request, res: Response) {
   stmt.free();
 }
 
+/**
+ * Renvoie tous les comptes d'un client, triés par type.
+ * @param req `params.id` : identifiant du client.
+ * @param res Tableau JSON des comptes.
+ */
 export async function getAccounts(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare("SELECT * FROM accounts WHERE clientId = ? ORDER BY type");
@@ -81,6 +108,12 @@ export async function getAccounts(req: Request, res: Response) {
   res.json(accounts);
 }
 
+/**
+ * Calcule le solde total d'un client regroupé par catégorie de compte
+ * (dépenses, épargne, emprunt, investissement) et associe une couleur à chacune.
+ * @param req `params.id` : identifiant du client.
+ * @param res Tableau JSON `{ category, total, color }`.
+ */
 export async function getBalancesByCategory(req: Request, res: Response) {
   const db = await getDb();
   const stmt = db.prepare(
@@ -107,6 +140,12 @@ export async function getBalancesByCategory(req: Request, res: Response) {
   );
 }
 
+/**
+ * Réinitialise un profil client en supprimant ses comptes, transactions,
+ * objectifs, alertes et bénéficiaires. (Ne régénère pas de nouvelles données.)
+ * @param req `params.id` : identifiant du client.
+ * @param res `{ success: true }`.
+ */
 export async function resetClient(req: Request, res: Response) {
   const db = await getDb();
   const clientId = req.params.id as string;

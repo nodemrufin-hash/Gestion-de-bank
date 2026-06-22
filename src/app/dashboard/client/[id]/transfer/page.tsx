@@ -1,11 +1,19 @@
 "use client";
 
+/**
+ * Page de virement.
+ *
+ * Deux modes : virement interne entre comptes du client, ou virement Interac
+ * vers un bénéficiaire (avec possibilité d'en créer un à la volée). Confirmation
+ * via une fenêtre modale avant exécution.
+ */
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getClientAccounts, getBeneficiaries, internalTransfer, interacTransfer, createBeneficiary } from "@/lib/api";
 import ConfirmModal from "@/components/common/ConfirmModal";
 
+/** Composant de la page de virement (interne / Interac). */
 export default function TransferPage() {
   const { id } = useParams<{ id: string }>();
   const [accounts, setAccounts] = useState<any[]>([]);

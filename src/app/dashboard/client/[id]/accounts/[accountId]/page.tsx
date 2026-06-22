@@ -1,11 +1,19 @@
 "use client";
 
+/**
+ * Page détail d'un compte.
+ *
+ * Affiche le solde et les informations du compte, son historique de
+ * transactions, ses transactions planifiées et récurrentes. Pour une carte de
+ * crédit, propose un formulaire de paiement depuis un compte chèques.
+ */
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getAccount, getClientAccounts, getTransactions, getFutureTransactions, getRecurringTransactions, payCreditCard } from "@/lib/api";
 import ConfirmModal from "@/components/common/ConfirmModal";
 
+/** Composant de la page détail d'un compte (solde, historique, paiement de carte). */
 export default function AccountDetailPage() {
   const { id, accountId } = useParams<{ id: string; accountId: string }>();
   const [account, setAccount] = useState<any>(null);
