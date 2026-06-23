@@ -110,9 +110,10 @@ export const resetAllData = () => request<any>("/admin/reset", { method: "POST" 
 
 // --- Gestion des administrateurs ---
 export const getAdmins = () => request<any[]>("/admin/admins");
-export const createAdmin = (data: { email: string; password: string }) =>
+export const createAdmin = (data: { email: string; password: string; currentEmail: string; currentPassword: string }) =>
   request<{ success: boolean; id: string }>("/admin/admins", { method: "POST", body: JSON.stringify(data) });
-export const deleteAdmin = (id: string) => request<any>(`/admin/admins/${id}`, { method: "DELETE" });
+export const deleteAdmin = (id: string, data: { currentEmail: string; currentPassword: string }) =>
+  request<any>(`/admin/admins/${id}`, { method: "DELETE", body: JSON.stringify(data) });
 
 // --- Account detail ---
 export const getAccount = (id: string) => request<any>(`/accounts/${id}`);

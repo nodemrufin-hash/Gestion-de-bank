@@ -18,9 +18,11 @@ export default function AdminPage() {
   const [parameters, setParameters] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
   const [admins, setAdmins] = useState<any[]>([]);
+  const [currentEmail, setCurrentEmail] = useState("");
   const [editValues, setEditValues] = useState<Record<string, string>>({});
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [newAdminPassword, setNewAdminPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -42,6 +44,7 @@ export default function AdminPage() {
       router.replace("/admin/login");
       return;
     }
+    setCurrentEmail(session.email);
     setAuthorized(true);
     load();
   }, [router]);
@@ -89,11 +92,21 @@ export default function AdminPage() {
     e.preventDefault();
     setMessage("");
     setError("");
+    if (!confirmPassword) {
+      setError("Veuillez confirmer avec votre mot de passe administrateur.");
+      return;
+    }
     try {
-      await createAdmin({ email: newAdminEmail.trim(), password: newAdminPassword });
+      await createAdmin({
+        email: newAdminEmail.trim(),
+        password: newAdminPassword,
+        currentEmail,
+        currentPassword: confirmPassword,
+      });
       setMessage(`Administrateur « ${newAdminEmail.trim()} » créé.`);
       setNewAdminEmail("");
       setNewAdminPassword("");
+      setConfirmPassword("");
       const adm = await getAdmins();
       setAdmins(adm);
     } catch (e: any) {
@@ -102,9 +115,10 @@ export default function AdminPage() {
   };
 
   const handleDeleteAdmin = async (id: string, email: string) => {
-    if (!window.confirm(`Supprimer l'administrateur « ${email} » ?`)) return;
+    const pwd = window.prompt(`Pour supprimer l'administrateur « ${email} », saisissez VOTRE mot de passe administrateur :`);
+    if (!pwd) return;
     try {
-      await deleteAdmin(id);
+      await deleteAdmin(id, { currentEmail, currentPassword: pwd });
       setMessage("Administrateur supprimé.");
       const adm = await getAdmins();
       setAdmins(adm);
@@ -215,6 +229,18 @@ export default function AdminPage() {
                 value={newAdminPassword}
                 onChange={(e) => setNewAdminPassword(e.target.value)}
                 placeholder="••••••••"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+              />
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3 items-end mt-3 pt-3 border-t border-slate-100">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs text-slate-500 mb-1">Votre mot de passe (confirmation)</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Mot de passe de l'admin connecté"
                 className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
               />
             </div>

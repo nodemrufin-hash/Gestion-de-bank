@@ -137,6 +137,21 @@ export async function adminLogin(req: Request, res: Response) {
 }
 
 /**
+ * Vérifie le couple courriel + mot de passe d'un administrateur existant.
+ * Sert à confirmer une action sensible (création/suppression) en redemandant
+ * le mot de passe de l'admin courant.
+ */
+function verifyAdminCredentials(db: Database, email: unknown, password: unknown): boolean {
+  if (!email || !password) return false;
+  const stmt = db.prepare("SELECT password FROM admins WHERE email = ?");
+  stmt.bind([String(email).trim().toLowerCase()]);
+  const found = stmt.step();
+  const row = found ? (stmt.getAsObject() as any) : null;
+  stmt.free();
+  return !!row && comparePassword(String(password), row.password);
+}
+
+/**
  * Liste les comptes administrateurs (sans les mots de passe).
  * @param res Tableau JSON `{ id, email, createdAt }`.
  */
@@ -151,13 +166,21 @@ export async function listAdmins(req: Request, res: Response) {
 }
 
 /**
- * Crée un nouveau compte administrateur (mot de passe haché).
- * @param req Corps : `{ email, password }` (mot de passe min 8 caractères).
- * @param res 201 `{ success, id }` ; 400 (champ/format invalide) ; 409 (courriel déjà utilisé).
+ * Crée un nouveau compte administrateur (mot de passe haché). Exige le mot de
+ * passe de l'admin courant pour confirmer l'action.
+ * @param req Corps : `{ email, password, currentEmail, currentPassword }`.
+ * @param res 201 `{ success, id }` ; 400 (format invalide) ; 401 (confirmation
+ *            invalide) ; 409 (courriel déjà utilisé).
  */
 export async function createAdmin(req: Request, res: Response) {
   const db = await getDb();
-  const { email, password } = req.body ?? {};
+  const { email, password, currentEmail, currentPassword } = req.body ?? {};
+
+  // Confirmation : l'admin courant doit re-saisir son mot de passe.
+  if (!verifyAdminCredentials(db, currentEmail, currentPassword)) {
+    res.status(401).json({ error: "Mot de passe administrateur incorrect." });
+    return;
+  }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email || !emailRegex.test(String(email))) {
@@ -187,13 +210,22 @@ export async function createAdmin(req: Request, res: Response) {
 }
 
 /**
- * Supprime un compte administrateur. Refuse de supprimer le dernier admin
- * restant pour ne pas verrouiller l'accès à l'administration.
- * @param req `params.id` : identifiant de l'admin à supprimer.
- * @param res `{ success: true }` ; 400 si c'est le dernier administrateur.
+ * Supprime un compte administrateur. Exige le mot de passe de l'admin courant
+ * pour confirmer, et refuse de supprimer le dernier admin restant pour ne pas
+ * verrouiller l'accès à l'administration.
+ * @param req `params.id` + corps `{ currentEmail, currentPassword }`.
+ * @param res `{ success: true }` ; 400 (dernier admin) ; 401 (confirmation invalide).
  */
 export async function deleteAdmin(req: Request, res: Response) {
   const db = await getDb();
+  const { currentEmail, currentPassword } = req.body ?? {};
+
+  // Confirmation : l'admin courant doit re-saisir son mot de passe.
+  if (!verifyAdminCredentials(db, currentEmail, currentPassword)) {
+    res.status(401).json({ error: "Mot de passe administrateur incorrect." });
+    return;
+  }
+
   const countRes = db.exec("SELECT COUNT(*) FROM admins");
   const count = countRes.length > 0 ? Number(countRes[0].values[0][0]) : 0;
   if (count <= 1) {
