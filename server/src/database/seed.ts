@@ -48,9 +48,34 @@ const PROVIDERS = [
 ];
 
 /**
+ * Crée les comptes d'un nouveau client « à vierge » : les 5 comptes habituels
+ * avec un solde à 0, sans aucune transaction, bénéficiaire, objectif ni alerte.
+ * Utilisé à l'inscription pour qu'un nouveau profil démarre vide, comme à
+ * l'ouverture réelle d'un compte. (Le seed de démo utilise plutôt
+ * `generateClientFinancials` pour pré-remplir des données fictives.)
+ */
+export function generateEmptyAccounts(db: Database, clientId: string): void {
+  const accountDefs = [
+    { type: "cheque", category: "depenses", name: "Chèques", creditLimit: 0, interestRate: 0 },
+    { type: "epargne", category: "epargne", name: "Épargne", creditLimit: 0, interestRate: 2.5 },
+    { type: "credit", category: "emprunt", name: "Carte de crédit", creditLimit: 5000, interestRate: 19.99 },
+    { type: "pret", category: "emprunt", name: "Prêt personnel", creditLimit: 0, interestRate: 6.5 },
+    { type: "investissement", category: "investissement", name: "CELI", creditLimit: 0, interestRate: 0 },
+  ];
+
+  for (const acc of accountDefs) {
+    const accNum = `LIBEO-${String(Math.floor(10000 + Math.random() * 90000))}-${String(Math.floor(100 + Math.random() * 900))}`;
+    db.run(
+      `INSERT INTO accounts (id, clientId, type, category, name, balance, accountNumber, creditLimit, interestRate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [uuid(), clientId, acc.type, acc.category, acc.name, 0, accNum, acc.creditLimit, acc.interestRate]
+    );
+  }
+}
+
+/**
  * Génère les comptes, transactions, bénéficiaires, objectifs et l'alerte de
- * solde faible pour un client existant. Utilisé à la fois par le seed initial
- * et lors de la création d'un nouveau profil client (F-01 / F-19).
+ * solde faible (données fictives) pour un client existant. Utilisé par le seed
+ * de démonstration pour pré-remplir les profils (F-19).
  */
 export function generateClientFinancials(db: Database, clientId: string): void {
   // --- ACCOUNTS ---

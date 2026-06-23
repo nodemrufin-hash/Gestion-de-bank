@@ -8,7 +8,7 @@
 import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
-import { generateClientFinancials } from "../database/seed";
+import { generateEmptyAccounts } from "../database/seed";
 import { hashPassword } from "./auth";
 
 const REQUIRED_FIELDS = [
@@ -24,8 +24,8 @@ const REQUIRED_FIELDS = [
 ] as const;
 
 /**
- * Crée un nouveau client (avec mot de passe haché) puis génère ses comptes,
- * transactions, bénéficiaires, objectifs et alerte de solde faible (F-01 / F-19).
+ * Crée un nouveau client (avec mot de passe haché) puis lui ouvre des comptes
+ * vierges (solde 0, sans transactions), comme à l'ouverture réelle d'un compte.
  * @param req Corps : champs de REQUIRED_FIELDS + `password` (min 8 caractères).
  * @param res 201 `{ success, id }` ; 400 (champ/format invalide) ; 409 (courriel déjà utilisé).
  */
@@ -69,8 +69,8 @@ export async function create(req: Request, res: Response) {
     [id, firstName, lastName, normalizedEmail, hashPassword(String(password)), phone, address, city, province, postalCode, dateNaissance]
   );
 
-  // Generation initiale des comptes et transactions (F-19)
-  generateClientFinancials(db, id);
+  // Ouverture de comptes vierges (solde 0, sans transactions).
+  generateEmptyAccounts(db, id);
 
   saveDb();
   res.status(201).json({ success: true, id });
