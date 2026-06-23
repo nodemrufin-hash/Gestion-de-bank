@@ -9,6 +9,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { getDb, closeDb } from "./database/database";
+import { ensureAuthSetup } from "./controllers/auth";
 import routes from "./routes";
 
 const app = express();
@@ -30,9 +31,10 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-/** Initialise (ou charge) la base de données au démarrage du serveur. */
+/** Initialise (ou charge) la base de données et prépare l'authentification. */
 async function start() {
-  await getDb();
+  const db = await getDb();
+  await ensureAuthSetup(db);
   console.log(`Serveur démarré sur http://localhost:${PORT}`);
 }
 

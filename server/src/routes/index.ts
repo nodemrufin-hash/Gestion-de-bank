@@ -13,9 +13,14 @@ import * as beneficiaries from "../controllers/beneficiaries";
 import * as goals from "../controllers/goals";
 import * as alerts from "../controllers/alerts";
 import * as admin from "../controllers/admin";
+import * as auth from "../controllers/auth";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
+
+// --- Authentification ---
+router.post("/auth/login", auth.clientLogin);
+router.post("/auth/admin/login", auth.adminLogin);
 
 // --- Clients ---
 router.get("/clients", clients.getAll);

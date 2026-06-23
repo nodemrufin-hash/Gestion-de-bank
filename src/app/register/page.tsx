@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import Logo from "@/components/common/Logo";
 import { createClient } from "@/lib/api";
+import { setClientSession } from "@/lib/auth";
 import { useState } from "react";
 
 const PROVINCES = [
@@ -34,6 +35,7 @@ type FormData = {
   firstName: string;
   lastName: string;
   email: string;
+  password: string;
   phone: string;
   address: string;
   city: string;
@@ -58,6 +60,7 @@ export default function RegisterPage() {
       firstName: "",
       lastName: "",
       email: "",
+      password: "",
       phone: "",
       address: "",
       city: "",
@@ -72,6 +75,8 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       const { id } = await createClient(data);
+      // Connexion automatique après inscription.
+      setClientSession({ id, firstName: data.firstName, lastName: data.lastName, email: data.email });
       router.push(`/dashboard/client/${id}`);
     } catch (err: any) {
       setServerError(err.message || "Une erreur est survenue.");
@@ -196,6 +201,26 @@ export default function RegisterPage() {
                   </p>
                 )}
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Mot de passe
+              </label>
+              <input
+                type="password"
+                placeholder="Au moins 8 caractères"
+                className={fieldClass(!!errors.password)}
+                {...register("password", {
+                  required: "Mot de passe requis.",
+                  minLength: { value: 8, message: "Au moins 8 caractères." },
+                })}
+              />
+              {errors.password && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <div>

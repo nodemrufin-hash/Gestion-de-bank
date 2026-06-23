@@ -12,12 +12,20 @@ CREATE TABLE IF NOT EXISTS clients (
   firstName TEXT NOT NULL,
   lastName TEXT NOT NULL,
   email TEXT NOT NULL,
+  password TEXT,
   phone TEXT NOT NULL,
   address TEXT NOT NULL,
   city TEXT NOT NULL,
   province TEXT NOT NULL,
   postalCode TEXT NOT NULL,
   dateNaissance TEXT NOT NULL,
+  createdAt TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS admins (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
   createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

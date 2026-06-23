@@ -1,21 +1,21 @@
 "use client";
 
 /**
- * Page de connexion client.
+ * Page de connexion administrateur.
  *
- * Formulaire courriel + mot de passe. En cas de succès, enregistre la session
- * client puis redirige vers le profil du client. Un lien distinct mène à la
- * connexion administrateur.
+ * Espace séparé de la connexion client : formulaire courriel + mot de passe
+ * vérifié contre le compte admin. En cas de succès, enregistre la session admin
+ * puis redirige vers la page d'administration.
  */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/common/Logo";
-import { loginClient } from "@/lib/api";
-import { setClientSession } from "@/lib/auth";
+import { loginAdmin } from "@/lib/api";
+import { setAdminSession } from "@/lib/auth";
 
-/** Composant de la page de connexion client (courriel + mot de passe). */
-export default function LoginPage() {
+/** Composant de la page de connexion administrateur. */
+export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,9 +31,9 @@ export default function LoginPage() {
     }
     setLoading(true);
     try {
-      const { client } = await loginClient(email.trim(), password);
-      setClientSession(client);
-      router.push(`/dashboard/client/${client.id}`);
+      const { email: adminEmail } = await loginAdmin(email.trim(), password);
+      setAdminSession(adminEmail);
+      router.push("/admin");
     } catch (err: any) {
       setError(err.message || "Connexion impossible.");
       setLoading(false);
@@ -41,18 +41,18 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col" style={{ backgroundColor: "#EDE8D0" }}>
+    <main className="min-h-screen flex flex-col" style={{ backgroundColor: "#0E2A47" }}>
       <header className="px-6 py-5">
-        <Logo variant="dark" size="md" />
+        <Logo variant="light" size="md" />
       </header>
 
       <div className="flex-1 flex items-center justify-center px-6 py-10">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-white/60 p-8 sm:p-10">
+        <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-8 sm:p-10">
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>
-              Connexion
+              Administration
             </h1>
-            <p className="text-slate-500 mt-2 text-sm">Accédez à vos comptes avec votre courriel.</p>
+            <p className="text-slate-500 mt-2 text-sm">Espace réservé à l'administrateur.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
@@ -62,7 +62,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="alice.tremblay@email.ca"
+                placeholder="admin@banque.ca"
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
               />
             </div>
@@ -91,19 +91,13 @@ export default function LoginPage() {
           </form>
 
           <p className="text-xs text-slate-400 text-center mt-4">
-            Démo : un client existant (ex. <span className="font-medium">alice.tremblay@email.ca</span>) · mot de passe{" "}
-            <span className="font-medium">Test1234!</span>
+            Démo : <span className="font-medium">admin@banque.ca</span> · mot de passe{" "}
+            <span className="font-medium">Admin1234!</span>
           </p>
 
           <p className="text-center text-sm text-slate-500 mt-6">
-            Pas encore de profil ?{" "}
-            <Link href="/register" className="font-semibold text-brand-800 hover:text-brand-900">
-              Ouvrir un compte
-            </Link>
-          </p>
-          <p className="text-center text-xs text-slate-400 mt-3">
-            <Link href="/admin/login" className="hover:text-brand-800">
-              Accès administrateur
+            <Link href="/login" className="font-semibold text-brand-800 hover:text-brand-900">
+              ← Connexion client
             </Link>
           </p>
         </div>

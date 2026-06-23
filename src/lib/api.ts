@@ -27,12 +27,25 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
+// --- Authentification ---
+export const loginClient = (email: string, password: string) =>
+  request<{ success: boolean; role: "client"; client: { id: string; firstName: string; lastName: string; email: string } }>(
+    "/auth/login",
+    { method: "POST", body: JSON.stringify({ email, password }) }
+  );
+export const loginAdmin = (email: string, password: string) =>
+  request<{ success: boolean; role: "admin"; email: string }>("/auth/admin/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+
 // --- Clients ---
 export const getClients = () => request<any[]>("/clients");
 export const createClient = (data: {
   firstName: string;
   lastName: string;
   email: string;
+  password: string;
   phone: string;
   address: string;
   city: string;

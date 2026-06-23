@@ -9,6 +9,7 @@ import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
 import { generateClientFinancials } from "../database/seed";
+import { hashPassword } from "./auth";
 
 const REQUIRED_FIELDS = [
   "firstName",
@@ -23,10 +24,10 @@ const REQUIRED_FIELDS = [
 ] as const;
 
 /**
- * Crée un nouveau client puis génère ses comptes, transactions, bénéficiaires,
- * objectifs et alerte de solde faible (F-01 / F-19).
- * @param req Corps attendu : tous les champs de REQUIRED_FIELDS + email valide.
- * @param res 201 avec `{ success, id }`, ou 400 si un champ est manquant/invalide.
+ * Crée un nouveau client (avec mot de passe haché) puis génère ses comptes,
+ * transactions, bénéficiaires, objectifs et alerte de solde faible (F-01 / F-19).
+ * @param req Corps : champs de REQUIRED_FIELDS + `password` (min 8 caractères).
+ * @param res 201 `{ success, id }` ; 400 (champ/format invalide) ; 409 (courriel déjà utilisé).
  */
 export async function create(req: Request, res: Response) {
   const db = await getDb();
@@ -40,7 +41,7 @@ export async function create(req: Request, res: Response) {
     }
   }
 
-  const { firstName, lastName, email, phone, address, city, province, postalCode, dateNaissance } = req.body;
+  const { firstName, lastName, email, phone, address, city, province, postalCode, dateNaissance, password } = req.body;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(String(email))) {
@@ -48,10 +49,24 @@ export async function create(req: Request, res: Response) {
     return;
   }
 
+  if (!password || String(password).length < 8) {
+    res.status(400).json({ error: "Le mot de passe doit contenir au moins 8 caractères." });
+    return;
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+
+  // Le courriel sert d'identifiant de connexion : il doit être unique.
+  const existing = db.exec("SELECT 1 FROM clients WHERE email = ?", [normalizedEmail]);
+  if (existing.length > 0 && existing[0].values.length > 0) {
+    res.status(409).json({ error: "Un compte existe déjà avec ce courriel." });
+    return;
+  }
+
   const id = uuid();
   db.run(
-    `INSERT INTO clients (id, firstName, lastName, email, phone, address, city, province, postalCode, dateNaissance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [id, firstName, lastName, email, phone, address, city, province, postalCode, dateNaissance]
+    `INSERT INTO clients (id, firstName, lastName, email, password, phone, address, city, province, postalCode, dateNaissance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [id, firstName, lastName, normalizedEmail, hashPassword(String(password)), phone, address, city, province, postalCode, dateNaissance]
   );
 
   // Generation initiale des comptes et transactions (F-19)

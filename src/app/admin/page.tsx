@@ -8,12 +8,13 @@
  */
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getParameters, updateParameter, resetAllData, getClients, resetClient } from "@/lib/api";
+import { getSession, logout } from "@/lib/auth";
 
 /** Composant de la page d'administration (paramètres globaux et réinitialisations). */
 export default function AdminPage() {
   const router = useRouter();
+  const [authorized, setAuthorized] = useState(false);
   const [parameters, setParameters] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
   const [editValues, setEditValues] = useState<Record<string, string>>({});
@@ -30,7 +31,25 @@ export default function AdminPage() {
     });
   };
 
-  useEffect(() => { load(); }, []);
+  // Garde d'authentification : réservé à l'administrateur connecté.
+  useEffect(() => {
+    const session = getSession();
+    if (!session || session.role !== "admin") {
+      router.replace("/admin/login");
+      return;
+    }
+    setAuthorized(true);
+    load();
+  }, [router]);
+
+  const handleLogout = () => {
+    logout();
+    router.replace("/admin/login");
+  };
+
+  if (!authorized) {
+    return <div className="min-h-screen flex items-center justify-center text-slate-400">Chargement...</div>;
+  }
 
   const handleSave = async (key: string) => {
     try {
@@ -80,9 +99,12 @@ export default function AdminPage() {
           <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>Administration</h1>
           <p className="text-sm text-slate-500">Paramètres globaux de l'application</p>
         </div>
-        <Link href="/dashboard" className="text-sm text-slate-500 hover:text-brand-800 transition-colors">
-          ← Tableau de bord
-        </Link>
+        <button
+          onClick={handleLogout}
+          className="text-sm font-semibold text-slate-500 hover:text-brand-800 transition-colors"
+        >
+          Déconnexion
+        </button>
       </div>
 
       {message && <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-sm text-emerald-700">{message}</div>}
