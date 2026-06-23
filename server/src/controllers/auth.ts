@@ -135,3 +135,72 @@ export async function adminLogin(req: Request, res: Response) {
 
   res.json({ success: true, role: "admin", email: admin.email });
 }
+
+/**
+ * Liste les comptes administrateurs (sans les mots de passe).
+ * @param res Tableau JSON `{ id, email, createdAt }`.
+ */
+export async function listAdmins(req: Request, res: Response) {
+  const db = await getDb();
+  const stmt = db.prepare("SELECT id, email, createdAt FROM admins ORDER BY createdAt");
+  stmt.bind([]);
+  const admins: any[] = [];
+  while (stmt.step()) admins.push(stmt.getAsObject());
+  stmt.free();
+  res.json(admins);
+}
+
+/**
+ * Crée un nouveau compte administrateur (mot de passe haché).
+ * @param req Corps : `{ email, password }` (mot de passe min 8 caractères).
+ * @param res 201 `{ success, id }` ; 400 (champ/format invalide) ; 409 (courriel déjà utilisé).
+ */
+export async function createAdmin(req: Request, res: Response) {
+  const db = await getDb();
+  const { email, password } = req.body ?? {};
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(String(email))) {
+    res.status(400).json({ error: "Adresse courriel invalide." });
+    return;
+  }
+  if (!password || String(password).length < 8) {
+    res.status(400).json({ error: "Le mot de passe doit contenir au moins 8 caractères." });
+    return;
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+  const existing = db.exec("SELECT 1 FROM admins WHERE email = ?", [normalizedEmail]);
+  if (existing.length > 0 && existing[0].values.length > 0) {
+    res.status(409).json({ error: "Un administrateur existe déjà avec ce courriel." });
+    return;
+  }
+
+  const id = uuid();
+  db.run("INSERT INTO admins (id, email, password) VALUES (?, ?, ?)", [
+    id,
+    normalizedEmail,
+    hashPassword(String(password)),
+  ]);
+  saveDb();
+  res.status(201).json({ success: true, id });
+}
+
+/**
+ * Supprime un compte administrateur. Refuse de supprimer le dernier admin
+ * restant pour ne pas verrouiller l'accès à l'administration.
+ * @param req `params.id` : identifiant de l'admin à supprimer.
+ * @param res `{ success: true }` ; 400 si c'est le dernier administrateur.
+ */
+export async function deleteAdmin(req: Request, res: Response) {
+  const db = await getDb();
+  const countRes = db.exec("SELECT COUNT(*) FROM admins");
+  const count = countRes.length > 0 ? Number(countRes[0].values[0][0]) : 0;
+  if (count <= 1) {
+    res.status(400).json({ error: "Impossible de supprimer le dernier administrateur." });
+    return;
+  }
+  db.run("DELETE FROM admins WHERE id = ?", [req.params.id as string]);
+  saveDb();
+  res.json({ success: true });
+}

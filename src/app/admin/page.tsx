@@ -8,7 +8,7 @@
  */
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getParameters, updateParameter, resetAllData, getClients, resetClient } from "@/lib/api";
+import { getParameters, updateParameter, resetAllData, getClients, resetClient, getAdmins, createAdmin, deleteAdmin } from "@/lib/api";
 import { getSession, logout } from "@/lib/auth";
 
 /** Composant de la page d'administration (paramètres globaux et réinitialisations). */
@@ -17,14 +17,18 @@ export default function AdminPage() {
   const [authorized, setAuthorized] = useState(false);
   const [parameters, setParameters] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
+  const [admins, setAdmins] = useState<any[]>([]);
   const [editValues, setEditValues] = useState<Record<string, string>>({});
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [newAdminPassword, setNewAdminPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   const load = () => {
-    Promise.all([getParameters(), getClients()]).then(([params, cls]) => {
+    Promise.all([getParameters(), getClients(), getAdmins()]).then(([params, cls, adm]) => {
       setParameters(params);
       setClients(cls);
+      setAdmins(adm);
       const vals: Record<string, string> = {};
       params.forEach((p) => { vals[p.key] = p.value; });
       setEditValues(vals);
@@ -81,6 +85,34 @@ export default function AdminPage() {
     }
   };
 
+  const handleCreateAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage("");
+    setError("");
+    try {
+      await createAdmin({ email: newAdminEmail.trim(), password: newAdminPassword });
+      setMessage(`Administrateur « ${newAdminEmail.trim()} » créé.`);
+      setNewAdminEmail("");
+      setNewAdminPassword("");
+      const adm = await getAdmins();
+      setAdmins(adm);
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
+  const handleDeleteAdmin = async (id: string, email: string) => {
+    if (!window.confirm(`Supprimer l'administrateur « ${email} » ?`)) return;
+    try {
+      await deleteAdmin(id);
+      setMessage("Administrateur supprimé.");
+      const adm = await getAdmins();
+      setAdmins(adm);
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
   const paramLabels: Record<string, string> = {
     default_low_balance_threshold: "Seuil de solde faible par défaut ($)",
     max_transfer_amount: "Montant max de virement ($)",
@@ -132,6 +164,68 @@ export default function AdminPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Administrateurs */}
+      <section>
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Administrateurs</h2>
+
+        {/* Liste des admins */}
+        <div className="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 mb-4">
+          {admins.length === 0 ? (
+            <p className="p-4 text-sm text-slate-400">Aucun administrateur.</p>
+          ) : (
+            admins.map((a) => (
+              <div key={a.id} className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-slate-900 text-sm">{a.email}</p>
+                  <p className="text-xs text-slate-400">Administrateur</p>
+                </div>
+                <button
+                  onClick={() => handleDeleteAdmin(a.id, a.email)}
+                  disabled={admins.length <= 1}
+                  className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  title={admins.length <= 1 ? "Impossible de supprimer le dernier administrateur" : "Supprimer"}
+                >
+                  Supprimer
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Ajout d'un admin */}
+        <form onSubmit={handleCreateAdmin} className="bg-white rounded-2xl border border-slate-200 p-5">
+          <p className="text-sm font-medium text-slate-700 mb-3">Ajouter un administrateur</p>
+          <div className="flex flex-wrap gap-3 items-end">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs text-slate-500 mb-1">Courriel</label>
+              <input
+                type="email"
+                value={newAdminEmail}
+                onChange={(e) => setNewAdminEmail(e.target.value)}
+                placeholder="admin2@banque.ca"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+              />
+            </div>
+            <div className="flex-1 min-w-[180px]">
+              <label className="block text-xs text-slate-500 mb-1">Mot de passe (min 8)</label>
+              <input
+                type="password"
+                value={newAdminPassword}
+                onChange={(e) => setNewAdminPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-900 transition-colors"
+            >
+              Ajouter
+            </button>
+          </div>
+        </form>
       </section>
 
       {/* Clients - réinitialisation */}

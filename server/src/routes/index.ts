@@ -62,6 +62,9 @@ router.put("/alerts/:id", alerts.update);
 router.get("/admin/parameters", admin.getParameters);
 router.put("/admin/parameters", admin.updateParameter);
 router.post("/admin/reset", admin.resetAll);
+router.get("/admin/admins", auth.listAdmins);
+router.post("/admin/admins", auth.createAdmin);
+router.delete("/admin/admins/:id", auth.deleteAdmin);
 
 // --- Credit card ---
 /** GET /accounts/:accountId — renvoie un compte par son identifiant (404 sinon). */
