@@ -56,7 +56,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return <div className="min-h-screen flex items-center justify-center text-slate-400">Chargement...</div>;
   }
 
-  const isActive = pathname === `/dashboard/client/${clientId}`;
+  const base = `/dashboard/client/${clientId}`;
+  const navItems = [
+    { label: "Accueil", href: base, icon: "▣", exact: true },
+    { label: "Mes comptes", href: `${base}/comptes`, icon: "🏦", match: ["/comptes", "/accounts/"] },
+    { label: "Virement", href: `${base}/transfer`, icon: "↗" },
+    { label: "Factures", href: `${base}/bills`, icon: "📄" },
+    { label: "Dépôt / Retrait", href: `${base}/deposit`, icon: "💳" },
+    { label: "Objectifs", href: `${base}/goals`, icon: "🎯" },
+    { label: "Produits", href: `${base}/products`, icon: "📦" },
+    { label: "Mon profil", href: `${base}/profil`, icon: "👤" },
+  ];
+
+  /** Indique si une entrée de navigation correspond à l'URL courante. */
+  const isItemActive = (item: (typeof navItems)[number]) => {
+    if (item.exact) return pathname === item.href;
+    if (item.match) return item.match.some((m) => pathname.includes(m));
+    return pathname.startsWith(item.href);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -91,16 +108,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 pt-6 transition-transform duration-300 flex flex-col`}
         >
           <nav className="flex flex-col gap-1 px-4">
-            <Link
-              href={`/dashboard/client/${clientId}`}
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                isActive ? "bg-brand-50 text-brand-800" : "text-slate-600 hover:bg-slate-100"
-              }`}
-            >
-              <span className="text-lg">□</span>
-              Mon profil
-            </Link>
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  isItemActive(item) ? "bg-brand-50 text-brand-800" : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <span className="text-lg">{item.icon}</span>
+                {item.label}
+              </Link>
+            ))}
           </nav>
 
           <button

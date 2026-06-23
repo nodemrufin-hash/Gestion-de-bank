@@ -99,7 +99,7 @@ export default function ProductsPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       <Link href={`/dashboard/client/${id}`} className="text-sm text-slate-500 hover:text-brand-800 transition-colors">
-        ← Retour au profil
+        ← Retour à l'accueil
       </Link>
 
       <div>

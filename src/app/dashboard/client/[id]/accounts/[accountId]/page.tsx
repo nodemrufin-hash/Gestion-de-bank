@@ -86,8 +86,8 @@ export default function AccountDetailPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <Link href={`/dashboard/client/${id}`} className="text-sm text-slate-500 hover:text-brand-800 transition-colors">
-        ← Retour au profil
+      <Link href={`/dashboard/client/${id}/comptes`} className="text-sm text-slate-500 hover:text-brand-800 transition-colors">
+        ← Retour aux comptes
       </Link>
 
       {/* En-tête du compte */}
