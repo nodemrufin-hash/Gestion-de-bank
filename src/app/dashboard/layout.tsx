@@ -11,6 +11,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { Home, Landmark, ArrowLeftRight, Receipt, Banknote, Target, Package, User } from "lucide-react";
 import Logo from "@/components/common/Logo";
 import { getSession, logout } from "@/lib/auth";
 
@@ -58,14 +59,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const base = `/dashboard/client/${clientId}`;
   const navItems = [
-    { label: "Accueil", href: base, icon: "▣", exact: true },
-    { label: "Mes comptes", href: `${base}/comptes`, icon: "🏦", match: ["/comptes", "/accounts/"] },
-    { label: "Virement", href: `${base}/transfer`, icon: "↗" },
-    { label: "Factures", href: `${base}/bills`, icon: "📄" },
-    { label: "Dépôt / Retrait", href: `${base}/deposit`, icon: "💳" },
-    { label: "Objectifs", href: `${base}/goals`, icon: "🎯" },
-    { label: "Produits", href: `${base}/products`, icon: "📦" },
-    { label: "Mon profil", href: `${base}/profil`, icon: "👤" },
+    { label: "Accueil", href: base, icon: Home, exact: true },
+    { label: "Mes comptes", href: `${base}/comptes`, icon: Landmark, match: ["/comptes", "/accounts/"] },
+    { label: "Virement", href: `${base}/transfer`, icon: ArrowLeftRight },
+    { label: "Factures", href: `${base}/bills`, icon: Receipt },
+    { label: "Dépôt / Retrait", href: `${base}/deposit`, icon: Banknote },
+    { label: "Objectifs", href: `${base}/goals`, icon: Target },
+    { label: "Produits", href: `${base}/products`, icon: Package },
+    { label: "Mon profil", href: `${base}/profil`, icon: User },
   ];
 
   /** Indique si une entrée de navigation correspond à l'URL courante. */
@@ -108,19 +109,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 pt-6 transition-transform duration-300 flex flex-col`}
         >
           <nav className="flex flex-col gap-1 px-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isItemActive(item) ? "bg-brand-50 text-brand-800" : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                <span className="text-lg">{item.icon}</span>
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    isItemActive(item) ? "bg-brand-50 text-brand-800" : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  <Icon className="w-5 h-5 shrink-0" strokeWidth={1.75} />
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <button
