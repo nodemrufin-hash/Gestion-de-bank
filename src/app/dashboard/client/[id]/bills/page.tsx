@@ -118,7 +118,7 @@ export default function BillsPage() {
               <option key={f.id} value={f.id}>{f.name}</option>
             ))}
           </select>
-          <button type="button" onClick={() => setShowNew(!showNew)} className="text-xs text-brand-700 mt-2 hover:underline">
+          <button type="button" onClick={() => setShowNew(!showNew)} className="text-xs text-brand-700 mt-2 hover:underline cursor-pointer">
             + Ajouter un fournisseur
           </button>
           {showNew && (
@@ -130,7 +130,7 @@ export default function BillsPage() {
                 placeholder="Nom du fournisseur"
                 className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none"
               />
-              <button type="button" onClick={handleCreateFournisseur} className="px-4 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-900">
+              <button type="button" onClick={handleCreateFournisseur} className="px-4 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-900 transition-colors cursor-pointer">
                 Ajouter
               </button>
             </div>
@@ -155,7 +155,7 @@ export default function BillsPage() {
 
         <button
           type="submit"
-          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50"
+          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer"
         >
           Payer la facture
         </button>

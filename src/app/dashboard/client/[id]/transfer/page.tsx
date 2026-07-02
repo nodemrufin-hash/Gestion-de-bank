@@ -114,13 +114,13 @@ export default function TransferPage() {
       <div className="flex gap-2 bg-slate-100 rounded-xl p-1">
         <button
           onClick={() => setMode("interne")}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${mode === "interne" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${mode === "interne" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
         >
           Interne
         </button>
         <button
           onClick={() => setMode("interac")}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${mode === "interac" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+          className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${mode === "interac" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
         >
           Interac
         </button>
@@ -176,7 +176,7 @@ export default function TransferPage() {
             <button
               type="button"
               onClick={() => setShowNewBenef(!showNewBenef)}
-              className="text-xs text-brand-700 mt-2 hover:underline"
+              className="text-xs text-brand-700 mt-2 hover:underline cursor-pointer"
             >
               + Ajouter un bénéficiaire
             </button>
@@ -199,7 +199,7 @@ export default function TransferPage() {
                 <button
                   type="button"
                   onClick={handleCreateBeneficiary}
-                  className="px-4 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-900"
+                  className="px-4 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-900 transition-colors cursor-pointer"
                 >
                   Ajouter
                 </button>
@@ -237,7 +237,7 @@ export default function TransferPage() {
 
         <button
           type="submit"
-          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50"
+          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer"
         >
           {`Effectuer le virement ${mode === "interac" ? "Interac" : "interne"}`}
         </button>

@@ -81,7 +81,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Top bar */}
       <header className="h-16 bg-white border-b border-slate-200 flex items-center px-4 lg:px-6 shrink-0">
         <button
-          className="lg:hidden mr-3 p-2 hover:bg-slate-100 rounded-lg"
+          className="lg:hidden mr-3 p-2 hover:bg-slate-100 rounded-lg cursor-pointer"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label="Menu"
         >
@@ -94,7 +94,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <span className="hidden sm:inline text-sm text-slate-500">{clientName}</span>
           <button
             onClick={handleLogout}
-            className="text-xs font-semibold text-slate-500 hover:text-brand-800 transition-colors"
+            className="text-xs font-semibold text-slate-500 hover:text-brand-800 transition-colors cursor-pointer"
           >
             Déconnexion
           </button>
@@ -129,7 +129,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <button
             onClick={handleLogout}
-            className="mt-auto mb-6 mx-4 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 text-left transition-colors"
+            className="mt-auto mb-6 mx-4 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 text-left transition-colors cursor-pointer"
           >
             Déconnexion
           </button>

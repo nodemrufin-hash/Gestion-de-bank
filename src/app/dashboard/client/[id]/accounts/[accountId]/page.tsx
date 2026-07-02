@@ -144,7 +144,7 @@ export default function AccountDetailPage() {
             <button
               onClick={handlePayCredit}
               disabled={paying}
-              className="px-6 py-2.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50"
+              className="px-6 py-2.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer"
             >
               {paying ? "Paiement..." : "Payer"}
             </button>

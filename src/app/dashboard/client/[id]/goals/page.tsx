@@ -78,7 +78,7 @@ export default function GoalsPage() {
         <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>Objectifs d'épargne</h1>
         <button
           onClick={() => setShowNew(!showNew)}
-          className="px-5 py-2.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors text-sm"
+          className="px-5 py-2.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors text-sm cursor-pointer"
         >
           + Nouvel objectif
         </button>
@@ -98,7 +98,7 @@ export default function GoalsPage() {
           </div>
           {message && <p className="text-sm text-red-500">{message}</p>}
           <button type="submit" disabled={saving}
-            className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 disabled:opacity-50">
+            className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer">
             {saving ? "Création..." : "Créer l'objectif"}
           </button>
         </form>
@@ -135,7 +135,7 @@ export default function GoalsPage() {
                   />
                   <button
                     onClick={() => handleProgress(g.id)}
-                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors"
+                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors cursor-pointer"
                   >
                     Ajouter
                   </button>
