@@ -94,7 +94,7 @@ export default function DepositPage() {
           <button
             key={m}
             onClick={() => setMode(m)}
-            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors capitalize ${mode === m ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors capitalize cursor-pointer ${mode === m ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
           >
             {m === "depot" ? "Dépôt" : m === "retrait" ? "Retrait" : "Chèque"}
           </button>
@@ -157,7 +157,7 @@ export default function DepositPage() {
 
         <button
           type="submit"
-          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50"
+          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer"
         >
           {isCheque ? "Déposer le chèque" : mode === "depot" ? "Effectuer le dépôt" : "Effectuer le retrait"}
         </button>
