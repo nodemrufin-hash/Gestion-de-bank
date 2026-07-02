@@ -108,7 +108,7 @@ export default function TransferPage() {
         ← Retour à l'accueil
       </Link>
 
-      <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>Virement</h1>
+      <h1 className="text-2xl font-bold text-slate-900 font-display">Virement</h1>
 
       {/* Mode selector */}
       <div className="flex gap-2 bg-slate-100 rounded-xl p-1">
@@ -133,7 +133,7 @@ export default function TransferPage() {
           <select
             value={fromAccountId}
             onChange={(e) => setFromAccountId(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
           >
             <option value="">Sélectionner un compte</option>
             {chequeAccounts.map((a) => (
@@ -149,7 +149,7 @@ export default function TransferPage() {
               <select
                 value={toAccountId}
                 onChange={(e) => setToAccountId(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
               >
                 <option value="">Sélectionner un compte</option>
                 {allAccounts
@@ -166,7 +166,7 @@ export default function TransferPage() {
             <select
               value={beneficiaryId}
               onChange={(e) => setBeneficiaryId(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
             >
               <option value="">Sélectionner un bénéficiaire</option>
               {beneficiaries.filter((b) => !b.isFournisseur).map((b) => (
@@ -176,7 +176,7 @@ export default function TransferPage() {
             <button
               type="button"
               onClick={() => setShowNewBenef(!showNewBenef)}
-              className="text-xs text-brand-700 mt-2 hover:underline cursor-pointer"
+              className="text-xs text-brand-800 mt-2 hover:underline cursor-pointer"
             >
               + Ajouter un bénéficiaire
             </button>
@@ -199,7 +199,7 @@ export default function TransferPage() {
                 <button
                   type="button"
                   onClick={handleCreateBeneficiary}
-                  className="px-4 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-900 transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-950 transition-colors cursor-pointer"
                 >
                   Ajouter
                 </button>
@@ -217,7 +217,7 @@ export default function TransferPage() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
           />
         </div>
 
@@ -228,7 +228,7 @@ export default function TransferPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Ex: Paiement loyer"
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
           />
         </div>
 
@@ -237,7 +237,7 @@ export default function TransferPage() {
 
         <button
           type="submit"
-          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer"
+          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 cursor-pointer"
         >
           {`Effectuer le virement ${mode === "interac" ? "Interac" : "interne"}`}
         </button>

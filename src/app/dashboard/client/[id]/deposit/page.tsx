@@ -87,7 +87,7 @@ export default function DepositPage() {
         ← Retour à l'accueil
       </Link>
 
-      <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>Dépôt / Retrait</h1>
+      <h1 className="text-2xl font-bold text-slate-900 font-display">Dépôt / Retrait</h1>
 
       <div className="flex gap-2 bg-slate-100 rounded-xl p-1">
         {(["depot", "retrait", "cheque"] as const).map((m) => (
@@ -107,7 +107,7 @@ export default function DepositPage() {
           <select
             value={accountId}
             onChange={(e) => setAccountId(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
           >
             <option value="">Sélectionner un compte</option>
             {accounts.map((a) => (
@@ -125,7 +125,7 @@ export default function DepositPage() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
           />
         </div>
 
@@ -136,7 +136,7 @@ export default function DepositPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder={isCheque ? "Ex: Chèque #1234" : "Ex: Dépôt en espèces"}
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
           />
         </div>
 
@@ -147,7 +147,7 @@ export default function DepositPage() {
               type="file"
               accept="image/*"
               onChange={(e) => setChequeFile(e.target.files?.[0] || null)}
-              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-800 hover:file:bg-brand-100"
+              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-800 hover:file:bg-brand-50"
             />
           </div>
         )}
@@ -157,7 +157,7 @@ export default function DepositPage() {
 
         <button
           type="submit"
-          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer"
+          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 cursor-pointer"
         >
           {isCheque ? "Déposer le chèque" : mode === "depot" ? "Effectuer le dépôt" : "Effectuer le retrait"}
         </button>

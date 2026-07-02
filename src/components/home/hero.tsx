@@ -26,9 +26,8 @@ export default function Hero() {
 
         {/* Titre */}
         <h1
-          className="font-extrabold leading-[1.0] tracking-tight uppercase mb-6"
+          className="font-extrabold leading-[1.0] tracking-tight uppercase mb-6 font-display"
           style={{
-            fontFamily: "var(--font-syne)",
             color: "#081A2E",
             fontSize: "clamp(2.5rem, 5vw, 5rem)",
           }}

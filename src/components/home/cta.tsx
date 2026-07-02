@@ -9,8 +9,7 @@ export default function CTA() {
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center flex flex-col items-center gap-8">
         <div className="flex flex-col gap-4">
           <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white"
-            style={{ fontFamily: "var(--font-syne)" }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white font-display"
           >
             Prêt à changer de banque ?
           </h2>
