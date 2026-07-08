@@ -94,7 +94,7 @@ export default function AccountDetailPage() {
       <div className="bg-white rounded-2xl border border-slate-200 p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>{account.name}</h1>
+            <h1 className="text-2xl font-bold text-slate-900 font-display">{account.name}</h1>
             <p className="text-slate-400 text-sm">{account.accountNumber} · {account.type}</p>
           </div>
           <div className="text-right">
@@ -121,7 +121,7 @@ export default function AccountDetailPage() {
               <select
                 value={payFromAccountId}
                 onChange={(e) => setPayFromAccountId(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
               >
                 <option value="">Sélectionner un compte</option>
                 {clientAccounts.filter((a) => a.type === "cheque").map((a) => (
@@ -138,13 +138,13 @@ export default function AccountDetailPage() {
                 value={payAmount}
                 onChange={(e) => setPayAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
               />
             </div>
             <button
               onClick={handlePayCredit}
               disabled={paying}
-              className="px-6 py-2.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-6 py-2.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 cursor-pointer"
             >
               {paying ? "Paiement..." : "Payer"}
             </button>

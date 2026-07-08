@@ -48,7 +48,7 @@ export default function ClientHomePage() {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <p className="text-slate-400 text-sm">Bienvenue</p>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>
+          <h1 className="text-2xl font-bold text-slate-900 font-display">
             Bonjour{client ? `, ${client.firstName}` : ""}
           </h1>
         </div>
@@ -72,7 +72,7 @@ export default function ClientHomePage() {
                 href={`/dashboard/client/${id}/${t.path}`}
                 className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-brand-300 hover:shadow-md transition-all group"
               >
-                <span className="inline-flex w-11 h-11 items-center justify-center rounded-xl bg-brand-50 text-brand-800 group-hover:bg-brand-100 transition-colors">
+                <span className="inline-flex w-11 h-11 items-center justify-center rounded-xl bg-brand-50 text-brand-800 group-hover:bg-brand-50 transition-colors">
                   <Icon className="w-5 h-5" strokeWidth={1.75} />
                 </span>
                 <p className="font-semibold text-slate-900 mt-3 group-hover:text-brand-800 transition-colors">{t.label}</p>

@@ -64,7 +64,7 @@ export default function ComptesPage() {
       </Link>
 
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>Mes comptes</h1>
+        <h1 className="text-2xl font-bold text-slate-900 font-display">Mes comptes</h1>
         <div className="text-right">
           <p className="text-sm text-slate-400">Solde total</p>
           <p className="text-xl font-bold text-slate-900">
@@ -167,7 +167,7 @@ export default function ComptesPage() {
                       step="0.01"
                       value={edit.threshold}
                       onChange={(e) => setAlertEdits((prev) => ({ ...prev, [a.id]: { ...edit, threshold: e.target.value } }))}
-                      className="w-32 px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+                      className="w-32 px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-600"
                     />
                   </div>
                   <label className="flex items-center gap-2 text-sm text-slate-700">
@@ -181,7 +181,7 @@ export default function ComptesPage() {
                   </label>
                   <button
                     onClick={() => handleSaveAlert(a.id)}
-                    className="px-4 py-2 bg-brand-800 text-white rounded-lg text-xs font-semibold hover:bg-brand-900 transition-colors cursor-pointer"
+                    className="px-4 py-2 bg-brand-800 text-white rounded-lg text-xs font-semibold hover:bg-brand-950 transition-colors cursor-pointer"
                   >
                     Enregistrer
                   </button>

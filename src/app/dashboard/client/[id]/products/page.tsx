@@ -103,7 +103,7 @@ export default function ProductsPage() {
       </Link>
 
       <div>
-        <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>
+        <h1 className="text-2xl font-bold text-slate-900 font-display">
           Produits financiers
         </h1>
         <p className="text-slate-500 text-sm mt-1">

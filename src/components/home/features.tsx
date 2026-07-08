@@ -51,8 +51,8 @@ export default function Features() {
             Fonctionnalités
           </p>
           <h2
-            className="text-3xl sm:text-4xl font-bold leading-tight mb-4"
-            style={{ fontFamily: "var(--font-syne)", color: "#081A2E" }}
+            className="text-3xl sm:text-4xl font-bold leading-tight mb-4 font-display"
+            style={{ color: "#081A2E" }}
           >
             Tout ce qu'une banque devrait faire — sans le reste.
           </h2>
@@ -77,8 +77,8 @@ export default function Features() {
               <div className="w-6 h-px mb-6" style={{ backgroundColor: "#1F4E6B" }} />
 
               <h3
-                className="font-bold text-lg mb-3 leading-snug"
-                style={{ fontFamily: "var(--font-syne)", color: "#081A2E" }}
+                className="font-bold text-lg mb-3 leading-snug font-display"
+                style={{ color: "#081A2E" }}
               >
                 {title}
               </h3>

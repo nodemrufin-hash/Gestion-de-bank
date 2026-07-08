@@ -75,10 +75,10 @@ export default function GoalsPage() {
       </Link>
 
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>Objectifs d'épargne</h1>
+        <h1 className="text-2xl font-bold text-slate-900 font-display">Objectifs d'épargne</h1>
         <button
           onClick={() => setShowNew(!showNew)}
-          className="px-5 py-2.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors text-sm cursor-pointer"
+          className="px-5 py-2.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors text-sm cursor-pointer"
         >
           + Nouvel objectif
         </button>
@@ -89,16 +89,16 @@ export default function GoalsPage() {
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Nom</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Voyage au Japon"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none" />
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none" />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Montant cible ($)</label>
             <input type="number" min="0" step="0.01" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} placeholder="5000"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none" />
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none" />
           </div>
           {message && <p className="text-sm text-red-500">{message}</p>}
           <button type="submit" disabled={saving}
-            className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 cursor-pointer">
+            className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 cursor-pointer">
             {saving ? "Création..." : "Créer l'objectif"}
           </button>
         </form>

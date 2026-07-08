@@ -108,8 +108,7 @@ export default function Security() {
                 Sécurité
               </p>
               <h2
-                className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4"
-                style={{ fontFamily: "var(--font-syne)" }}
+                className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-4 font-display"
               >
                 Votre argent est protégé.{" "}
                 <span style={{ color: "#9FB8C9" }}>Point.</span>

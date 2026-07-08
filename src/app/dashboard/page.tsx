@@ -26,7 +26,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900 mb-6" style={{ fontFamily: "var(--font-syne)" }}>
+      <h1 className="text-2xl font-bold text-slate-900 mb-6 font-display">
         Tableau de bord
       </h1>
       <p className="text-slate-500 mb-8">Sélectionnez un profil client pour accéder à ses comptes et opérations.</p>

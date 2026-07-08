@@ -85,10 +85,10 @@ export default function RegisterPage() {
   };
 
   const fieldClass = (hasError: boolean) =>
-    `w-full px-4 py-2.5 rounded-xl border outline-none transition-colors focus:ring-2 focus:ring-brand-100 ${
+    `w-full px-4 py-2.5 rounded-xl border outline-none transition-colors focus:ring-2 focus:ring-brand-50 ${
       hasError
         ? "border-red-400 focus:border-red-400"
-        : "border-slate-200 focus:border-brand-400"
+        : "border-slate-200 focus:border-brand-600"
     }`;
 
   return (
@@ -104,8 +104,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-xl bg-white rounded-3xl shadow-sm border border-white/60 p-8 sm:p-10">
           <div className="mb-8 text-center">
             <h1
-              className="text-3xl font-bold text-slate-900"
-              style={{ fontFamily: "var(--font-syne)" }}
+              className="text-3xl font-bold text-slate-900 font-display"
             >
               Ouvrir un compte
             </h1>
@@ -320,7 +319,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-900 transition-colors disabled:opacity-50 mt-2"
+              className="w-full py-3.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 mt-2"
             >
               {submitting ? "Création du compte..." : "Créer mon compte"}
             </button>
@@ -330,7 +329,7 @@ export default function RegisterPage() {
             Vous avez déjà un profil ?{" "}
             <Link
               href="/login"
-              className="font-semibold text-brand-800 hover:text-brand-900"
+              className="font-semibold text-brand-800 hover:text-brand-950"
             >
               Se connecter
             </Link>

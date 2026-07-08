@@ -15,8 +15,8 @@ export default function About() {
             À propos
           </p>
           <h2
-            className="text-4xl font-bold leading-tight mb-5"
-            style={{ fontFamily: "var(--font-syne)", color: "#0d1b2e" }}
+            className="text-4xl font-bold leading-tight mb-5 font-display"
+            style={{ color: "#0d1b2e" }}
           >
             Une banque pensée pour les Québécois.
           </h2>
@@ -37,8 +37,8 @@ export default function About() {
             {stats.map(({ value, label }) => (
               <div key={label} className="flex flex-col gap-1">
                 <span
-                  className="text-3xl font-bold"
-                  style={{ fontFamily: "var(--font-syne)", color: "#0d1b2e" }}
+                  className="text-3xl font-bold font-display"
+                  style={{ color: "#0d1b2e" }}
                 >
                   {value}
                 </span>

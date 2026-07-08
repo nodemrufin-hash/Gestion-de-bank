@@ -37,8 +37,8 @@ export default function Logo({ variant = "dark", size = "md" }: LogoProps) {
         </svg>
       </div>
       <span
-        className={`font-bold tracking-tight ${text}`}
-        style={{ fontFamily: "var(--font-syne)", color: textColor }}
+        className={`font-bold tracking-tight font-display ${text}`}
+        style={{ color: textColor }}
       >
         Libéo
       </span>

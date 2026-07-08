@@ -47,7 +47,7 @@ export default function ProfilPage() {
           {client.firstName[0]}{client.lastName[0]}
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>
+          <h1 className="text-2xl font-bold text-slate-900 font-display">
             {client.firstName} {client.lastName}
           </h1>
           <p className="text-slate-500 text-sm">{client.email}</p>

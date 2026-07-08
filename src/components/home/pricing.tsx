@@ -58,8 +58,7 @@ export default function Pricing() {
             Tarifs
           </p>
           <h2
-            className="text-4xl font-bold text-slate-900 leading-tight mb-4"
-            style={{ fontFamily: "var(--font-syne)" }}
+            className="text-4xl font-bold text-slate-900 leading-tight mb-4 font-display"
           >
             Des tarifs simples, sans frais cachés.
           </h2>
@@ -76,7 +75,7 @@ export default function Pricing() {
               className={`rounded-2xl border p-8 flex flex-col transition-all duration-300 ${
                 plan.highlighted
                   ? "border-brand-800 shadow-lg shadow-brand-50 scale-[1.02]"
-                  : "border-slate-200 hover:border-brand-200 hover:shadow-md"
+                  : "border-slate-200 hover:border-brand-300 hover:shadow-md"
               }`}
             >
               {plan.highlighted && (
@@ -87,8 +86,7 @@ export default function Pricing() {
               <h3 className="font-semibold text-slate-900 text-lg mb-1">{plan.name}</h3>
               <div className="flex items-baseline gap-1 mb-3">
                 <span
-                  className="text-4xl font-bold text-slate-900"
-                  style={{ fontFamily: "var(--font-syne)" }}
+                  className="text-4xl font-bold text-slate-900 font-display"
                 >
                   {plan.price}
                 </span>

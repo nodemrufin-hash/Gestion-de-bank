@@ -142,7 +142,7 @@ export default function AdminPage() {
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "var(--font-syne)" }}>Administration</h1>
+          <h1 className="text-2xl font-bold text-slate-900 font-display">Administration</h1>
           <p className="text-sm text-slate-500">Paramètres globaux de l'application</p>
         </div>
         <button
@@ -167,11 +167,11 @@ export default function AdminPage() {
                 type="text"
                 value={editValues[p.key] || ""}
                 onChange={(e) => setEditValues((prev) => ({ ...prev, [p.key]: e.target.value }))}
-                className="w-40 px-3 py-1.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+                className="w-40 px-3 py-1.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-600"
               />
               <button
                 onClick={() => handleSave(p.key)}
-                className="px-4 py-1.5 bg-brand-800 text-white rounded-lg text-xs font-semibold hover:bg-brand-900 transition-colors"
+                className="px-4 py-1.5 bg-brand-800 text-white rounded-lg text-xs font-semibold hover:bg-brand-950 transition-colors"
               >
                 Sauvegarder
               </button>
@@ -219,7 +219,7 @@ export default function AdminPage() {
                 value={newAdminEmail}
                 onChange={(e) => setNewAdminEmail(e.target.value)}
                 placeholder="admin2@banque.ca"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-600"
               />
             </div>
             <div className="flex-1 min-w-[180px]">
@@ -229,7 +229,7 @@ export default function AdminPage() {
                 value={newAdminPassword}
                 onChange={(e) => setNewAdminPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-600"
               />
             </div>
           </div>
@@ -241,12 +241,12 @@ export default function AdminPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Mot de passe de l'admin connecté"
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-400"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-600"
               />
             </div>
             <button
               type="submit"
-              className="px-5 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-900 transition-colors"
+              className="px-5 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-950 transition-colors"
             >
               Ajouter
             </button>
