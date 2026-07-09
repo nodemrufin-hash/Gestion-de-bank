@@ -21,51 +21,83 @@ export default function ProfilPage() {
     getClient(id).then(setClient).catch(console.error);
   }, [id]);
 
-  if (!client) return <div className="text-center py-20 text-slate-400">Chargement...</div>;
+  if (!client)
+    return (
+      <div className="text-center py-20 text-slate-400">Chargement...</div>
+    );
 
-  const fields = [
-    { label: "Prénom", value: client.firstName },
-    { label: "Nom", value: client.lastName },
-    { label: "Courriel", value: client.email },
-    { label: "Téléphone", value: client.phone },
-    { label: "Adresse", value: client.address },
-    { label: "Ville", value: client.city },
-    { label: "Province", value: client.province },
-    { label: "Code postal", value: client.postalCode },
-    { label: "Date de naissance", value: client.dateNaissance },
+  const groups = [
+    {
+      label: "Identité",
+      fields: [
+        { label: "Prénom", value: client.firstName },
+        { label: "Nom", value: client.lastName },
+        { label: "Date de naissance", value: client.dateNaissance },
+      ],
+    },
+    {
+      label: "Contact",
+      fields: [
+        { label: "Courriel", value: client.email },
+        { label: "Téléphone", value: client.phone },
+      ],
+    },
+    {
+      label: "Adresse",
+      fields: [
+        { label: "Adresse", value: client.address },
+        { label: "Ville", value: client.city },
+        { label: "Province", value: client.province },
+        { label: "Code postal", value: client.postalCode },
+      ],
+    },
   ];
 
   return (
     <div className="max-w-3xl mx-auto space-y-8">
-      <Link href={`/dashboard/client/${id}`} className="text-sm text-slate-500 hover:text-brand-800 transition-colors">
+      <Link
+        href={`/dashboard/client/${id}`}
+        className="text-sm text-brand-steel hover:text-brand-800 transition-colors font-medium"
+      >
         ← Retour à l'accueil
       </Link>
 
       {/* En-tête profil */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-brand-800 text-white flex items-center justify-center text-2xl font-bold shrink-0">
-          {client.firstName[0]}{client.lastName[0]}
+      <div className="card p-6 flex items-center gap-4">
+        <div className="w-16 h-16 rounded-full bg-brand-950 text-white flex items-center justify-center text-2xl font-bold font-display shrink-0">
+          {client.firstName[0]}
+          {client.lastName[0]}
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 font-display">
+          <h1 className="text-2xl font-extrabold text-slate-900 font-display">
             {client.firstName} {client.lastName}
           </h1>
           <p className="text-slate-500 text-sm">{client.email}</p>
         </div>
       </div>
 
-      {/* Informations détaillées */}
-      <section>
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">Informations personnelles</h2>
-        <div className="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100">
-          {fields.map((f) => (
-            <div key={f.label} className="p-4 flex items-center justify-between gap-4">
-              <span className="text-sm text-slate-500">{f.label}</span>
-              <span className="text-sm font-medium text-slate-900 text-right">{f.value}</span>
+      {/* Informations détaillées, groupées par section */}
+      <div className="space-y-6">
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 font-display">
+          Informations personnelles
+        </h2>
+
+        {groups.map((group) => (
+          <section key={group.label}>
+            <h3 className="text-sm font-extrabold uppercase tracking-wide text-brand-steel font-display mb-3">
+              {group.label}
+            </h3>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {group.fields.map((f) => (
+                <div key={f.label} className="card p-4">
+                  <p className="text-xs text-slate-400 mb-1">{f.label}</p>
+                  <p className="text-sm font-bold text-slate-900">{f.value}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
+        ))}
+      </div>
     </div>
   );
 }

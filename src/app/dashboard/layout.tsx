@@ -11,7 +11,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Home, Landmark, ArrowLeftRight, Receipt, Banknote, Target, Package, User } from "lucide-react";
+import {
+  Home,
+  Landmark,
+  ArrowLeftRight,
+  Receipt,
+  Banknote,
+  Target,
+  Package,
+  User,
+} from "lucide-react";
 import Logo from "@/components/common/Logo";
 import { getSession, logout } from "@/lib/auth";
 
@@ -19,7 +28,11 @@ import { getSession, logout } from "@/lib/auth";
  * Layout de l'espace client.
  * @param children Contenu de la page courante rendu dans la zone principale.
  */
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [authorized, setAuthorized] = useState(false);
   const [clientId, setClientId] = useState("");
@@ -54,13 +67,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Tant que la garde n'a pas validé l'accès, on n'affiche pas le contenu.
   if (!authorized) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-400">Chargement...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-slate-400">
+        Chargement...
+      </div>
+    );
   }
 
   const base = `/dashboard/client/${clientId}`;
   const navItems = [
     { label: "Accueil", href: base, icon: Home, exact: true },
-    { label: "Mes comptes", href: `${base}/comptes`, icon: Landmark, match: ["/comptes", "/accounts/"] },
+    {
+      label: "Mes comptes",
+      href: `${base}/comptes`,
+      icon: Landmark,
+      match: ["/comptes", "/accounts/"],
+    },
     { label: "Virement", href: `${base}/transfer`, icon: ArrowLeftRight },
     { label: "Factures", href: `${base}/bills`, icon: Receipt },
     { label: "Dépôt / Retrait", href: `${base}/deposit`, icon: Banknote },
@@ -91,7 +113,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </button>
         <Logo variant="dark" size="sm" />
         <div className="ml-auto flex items-center gap-4">
-          <span className="hidden sm:inline text-sm text-slate-500">{clientName}</span>
+          <span className="hidden sm:inline text-sm text-slate-500">
+            {clientName}
+          </span>
           <button
             onClick={handleLogout}
             className="text-xs font-semibold text-slate-500 hover:text-brand-800 transition-colors cursor-pointer"
@@ -117,7 +141,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                    isItemActive(item) ? "bg-brand-50 text-brand-800" : "text-slate-600 hover:bg-slate-100"
+                    isItemActive(item)
+                      ? "bg-brand-950 text-white"
+                      : "text-slate-600 hover:bg-slate-100"
                   }`}
                 >
                   <Icon className="w-5 h-5 shrink-0" strokeWidth={1.75} />

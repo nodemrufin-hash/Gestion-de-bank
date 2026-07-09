@@ -40,8 +40,14 @@ export default function DepositPage() {
     setError("");
 
     const amt = parseFloat(amount);
-    if (isNaN(amt) || amt <= 0) { setError("Montant invalide"); return; }
-    if (!accountId) { setError("Compte requis"); return; }
+    if (isNaN(amt) || amt <= 0) {
+      setError("Montant invalide");
+      return;
+    }
+    if (!accountId) {
+      setError("Compte requis");
+      return;
+    }
 
     setShowConfirm(true);
   };
@@ -57,13 +63,19 @@ export default function DepositPage() {
         formData.append("description", description || "Dépôt de chèque");
         if (chequeFile) formData.append("chequeImage", chequeFile);
         await depositCheque(formData);
-        setMessage(`Chèque de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} déposé !`);
+        setMessage(
+          `Chèque de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} déposé !`,
+        );
       } else if (mode === "depot") {
         await deposit({ accountId, amount: amt, description });
-        setMessage(`Dépôt de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`);
+        setMessage(
+          `Dépôt de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`,
+        );
       } else {
         await withdraw({ accountId, amount: amt, description });
-        setMessage(`Retrait de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`);
+        setMessage(
+          `Retrait de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`,
+        );
       }
       setAmount("");
       setDescription("");
@@ -79,15 +91,25 @@ export default function DepositPage() {
   const isCheque = mode === "cheque";
   const account = accounts.find((a) => a.id === accountId);
   const amt = parseFloat(amount) || 0;
-  const operationLabel = mode === "cheque" ? "le dépôt de chèque" : mode === "depot" ? "le dépôt" : "le retrait";
+  const operationLabel =
+    mode === "cheque"
+      ? "le dépôt de chèque"
+      : mode === "depot"
+        ? "le dépôt"
+        : "le retrait";
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      <Link href={`/dashboard/client/${id}`} className="text-sm text-slate-500 hover:text-brand-800 transition-colors">
+      <Link
+        href={`/dashboard/client/${id}`}
+        className="text-sm text-slate-500 hover:text-brand-800 transition-colors"
+      >
         ← Retour à l'accueil
       </Link>
 
-      <h1 className="text-2xl font-bold text-slate-900 font-display">Dépôt / Retrait</h1>
+      <h1 className="text-4xl font-extrabold text-slate-900 font-display">
+        Dépôt / Retrait
+      </h1>
 
       <div className="flex gap-2 bg-slate-100 rounded-xl p-1">
         {(["depot", "retrait", "cheque"] as const).map((m) => (
@@ -101,9 +123,11 @@ export default function DepositPage() {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="card p-6 space-y-5">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Compte</label>
+          <label className="block text-sm font-extrabold font-display text-brand-steel mb-1.5">
+            Compte
+          </label>
           <select
             value={accountId}
             onChange={(e) => setAccountId(e.target.value)}
@@ -111,13 +135,21 @@ export default function DepositPage() {
           >
             <option value="">Sélectionner un compte</option>
             {accounts.map((a) => (
-              <option key={a.id} value={a.id}>{a.name} — {a.balance.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</option>
+              <option key={a.id} value={a.id}>
+                {a.name} —{" "}
+                {a.balance.toLocaleString("fr-CA", {
+                  style: "currency",
+                  currency: "CAD",
+                })}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Montant ($)</label>
+          <label className="block text-sm font-extrabold font-display text-brand-steel mb-1.5">
+            Montant ($)
+          </label>
           <input
             type="number"
             min="0"
@@ -130,7 +162,9 @@ export default function DepositPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Description (optionnelle)</label>
+          <label className="block text-sm font-extrabold font-display text-brand-steel mb-1.5">
+            Description (optionnelle)
+          </label>
           <input
             type="text"
             value={description}
@@ -142,7 +176,9 @@ export default function DepositPage() {
 
         {isCheque && (
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Photo du chèque</label>
+            <label className="block text-sm font-extrabold font-display text-brand-steel mb-1.5">
+              Photo du chèque
+            </label>
             <input
               type="file"
               accept="image/*"
@@ -152,14 +188,23 @@ export default function DepositPage() {
           </div>
         )}
 
-        {error && <p className="text-sm text-red-500 bg-red-50 px-4 py-2 rounded-lg">{error}</p>}
-        {message && <p className="text-sm text-emerald-600 bg-emerald-50 px-4 py-2 rounded-lg">{message}</p>}
+        {error && (
+          <p className="text-sm text-red-500 bg-red-50 px-4 py-2 rounded-lg">
+            {error}
+          </p>
+        )}
+        {message && (
+          <p className="text-sm text-emerald-600 bg-emerald-50 px-4 py-2 rounded-lg">
+            {message}
+          </p>
+        )}
 
-        <button
-          type="submit"
-          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 cursor-pointer"
-        >
-          {isCheque ? "Déposer le chèque" : mode === "depot" ? "Effectuer le dépôt" : "Effectuer le retrait"}
+        <button type="submit" className="w-full btn-primary py-3">
+          {isCheque
+            ? "Déposer le chèque"
+            : mode === "depot"
+              ? "Effectuer le dépôt"
+              : "Effectuer le retrait"}
         </button>
       </form>
 
@@ -170,9 +215,24 @@ export default function DepositPage() {
         onConfirm={handleConfirm}
         onCancel={() => setShowConfirm(false)}
       >
-        <p>Compte : <strong>{account?.name}</strong></p>
-        <p>Montant : <strong>{amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</strong></p>
-        {isCheque && <p>Photo du chèque : <strong>{chequeFile ? chequeFile.name : "aucune"}</strong></p>}
+        <p>
+          Compte : <strong>{account?.name}</strong>
+        </p>
+        <p>
+          Montant :{" "}
+          <strong>
+            {amt.toLocaleString("fr-CA", {
+              style: "currency",
+              currency: "CAD",
+            })}
+          </strong>
+        </p>
+        {isCheque && (
+          <p>
+            Photo du chèque :{" "}
+            <strong>{chequeFile ? chequeFile.name : "aucune"}</strong>
+          </p>
+        )}
       </ConfirmModal>
     </div>
   );
