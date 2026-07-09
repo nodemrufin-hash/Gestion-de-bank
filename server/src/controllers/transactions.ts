@@ -11,6 +11,16 @@ import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
 
 /**
+ * Fonds disponibles d'un compte pour un débit. Pour une carte de crédit, le
+ * solde est négatif (dette) : le disponible est le solde plus la limite de
+ * crédit. Pour les autres comptes, c'est simplement le solde.
+ */
+function availableFunds(acc: any): number {
+  if (acc.type === "credit") return acc.balance + (acc.creditLimit || 0);
+  return acc.balance;
+}
+
+/**
  * Renvoie l'historique des transactions complétées d'un compte (100 plus récentes).
  * @param req `params.accountId` : identifiant du compte.
  * @param res Tableau JSON des transactions (hors transactions futures).
@@ -85,7 +95,7 @@ export async function internalTransfer(req: Request, res: Response) {
   const fromAcc = fromStmt.getAsObject() as any;
   fromStmt.free();
 
-  if (fromAcc.balance < amt) {
+  if (availableFunds(fromAcc) < amt) {
     res.status(400).json({ error: "Solde insuffisant" });
     return;
   }
@@ -144,7 +154,7 @@ export async function interacTransfer(req: Request, res: Response) {
   const fromAcc = fromStmt.getAsObject() as any;
   fromStmt.free();
 
-  if (fromAcc.balance < amt) {
+  if (availableFunds(fromAcc) < amt) {
     res.status(400).json({ error: "Solde insuffisant" });
     return;
   }
@@ -192,7 +202,7 @@ export async function payBill(req: Request, res: Response) {
   const fromAcc = fromStmt.getAsObject() as any;
   fromStmt.free();
 
-  if (fromAcc.balance < amt) {
+  if (availableFunds(fromAcc) < amt) {
     res.status(400).json({ error: "Solde insuffisant" });
     return;
   }

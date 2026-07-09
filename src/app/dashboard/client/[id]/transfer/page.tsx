@@ -133,7 +133,10 @@ export default function TransferPage() {
   };
 
   const allAccounts = accounts.filter(
-    (a) => a.category === "depenses" || a.category === "epargne",
+    (a) =>
+      a.category === "depenses" ||
+      a.category === "epargne" ||
+      a.type === "credit",
   );
 
   const fromAccount = accounts.find((a) => a.id === fromAccountId);

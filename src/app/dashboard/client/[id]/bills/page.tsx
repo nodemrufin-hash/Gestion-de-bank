@@ -100,7 +100,9 @@ export default function BillsPage() {
     }
   };
 
-  const chequeAccounts = accounts.filter((a) => a.type === "cheque");
+  const debitAccounts = accounts.filter(
+    (a) => a.type === "cheque" || a.type === "credit",
+  );
   const fromAccount = accounts.find((a) => a.id === fromAccountId);
   const fournisseur = fournisseurs.find((f) => f.id === fournisseurId);
   const amt = parseFloat(amount) || 0;
@@ -129,7 +131,7 @@ export default function BillsPage() {
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
           >
             <option value="">Sélectionner un compte</option>
-            {chequeAccounts.map((a) => (
+            {debitAccounts.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.name} —{" "}
                 {a.balance.toLocaleString("fr-CA", {
