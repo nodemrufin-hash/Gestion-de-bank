@@ -8,6 +8,8 @@
   --color-brand-600: #1f4e6b;
   --color-brand-300: #9fb8c9;
   --color-brand-50: #f2f5f7;
+  --color-brand-cream: #ede8d0;
+  --color-brand-steel: #4682b4;
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-syne), system-ui, sans-serif;
@@ -42,5 +44,46 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: #1f4e6b;
+  }
+}
+
+@layer components {
+  /* Petit label uppercase au-dessus des titres de section (ex: "SÉCURITÉ", "TARIFS") */
+  .eyebrow {
+    @apply text-brand-800 text-sm font-semibold uppercase tracking-widest;
+  }
+
+  /* Card blanche standard, réutilisée sur toutes les pages connectées */
+  .card {
+    @apply bg-white rounded-2xl border border-slate-200;
+  }
+
+  .card-hover {
+    @apply hover:border-brand-300 hover:shadow-md transition-all duration-200;
+  }
+
+  /* Card sur fond foncé (style section Sécurité / CTA) */
+  .card-dark {
+    @apply bg-brand-950 text-white rounded-2xl;
+  }
+
+  /* Bouton principal, fond marine foncé */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-brand-950 text-white font-semibold rounded-xl px-6 py-3 transition-opacity duration-200 hover:opacity-90 active:scale-95 cursor-pointer;
+  }
+
+  /* Bouton secondaire, contour */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 border border-slate-200 text-brand-950 font-semibold rounded-xl px-6 py-3 transition-colors duration-200 hover:border-brand-300 cursor-pointer;
+  }
+
+  /* Badge pill, ex: "Banque 100% numérique" dans le hero */
+  .badge {
+    @apply inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-full border border-brand-950 text-brand-950 w-fit;
+  }
+
+  /* Gros chiffre / montant, ex: solde total */
+  .stat-figure {
+    @apply font-display font-extrabold text-slate-900;
   }
 }

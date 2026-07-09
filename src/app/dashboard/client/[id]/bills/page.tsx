@@ -9,7 +9,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { getClientAccounts, getBeneficiaries, payBill, createBeneficiary } from "@/lib/api";
+import {
+  getClientAccounts,
+  getBeneficiaries,
+  payBill,
+  createBeneficiary,
+} from "@/lib/api";
 import ConfirmModal from "@/components/common/ConfirmModal";
 
 /** Composant de la page de paiement de factures. */
@@ -30,11 +35,13 @@ export default function BillsPage() {
 
   useEffect(() => {
     if (!id) return;
-    Promise.all([getClientAccounts(id), getBeneficiaries(id)]).then(([accs, bens]) => {
-      setAccounts(accs);
-      setFournisseurs(bens.filter((b: any) => b.isFournisseur));
-      if (accs.length > 0) setFromAccountId(accs[0].id);
-    });
+    Promise.all([getClientAccounts(id), getBeneficiaries(id)]).then(
+      ([accs, bens]) => {
+        setAccounts(accs);
+        setFournisseurs(bens.filter((b: any) => b.isFournisseur));
+        if (accs.length > 0) setFromAccountId(accs[0].id);
+      },
+    );
   }, [id]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,9 +50,18 @@ export default function BillsPage() {
     setError("");
 
     const amt = parseFloat(amount);
-    if (isNaN(amt) || amt <= 0) { setError("Montant invalide"); return; }
-    if (!fromAccountId) { setError("Compte source requis"); return; }
-    if (!fournisseurId) { setError("Fournisseur requis"); return; }
+    if (isNaN(amt) || amt <= 0) {
+      setError("Montant invalide");
+      return;
+    }
+    if (!fromAccountId) {
+      setError("Compte source requis");
+      return;
+    }
+    if (!fournisseurId) {
+      setError("Fournisseur requis");
+      return;
+    }
 
     setShowConfirm(true);
   };
@@ -55,7 +71,9 @@ export default function BillsPage() {
     setLoading(true);
     try {
       await payBill({ fromAccountId, fournisseurId, amount: amt });
-      setMessage(`Paiement de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`);
+      setMessage(
+        `Paiement de ${amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })} effectué !`,
+      );
       setAmount("");
       setShowConfirm(false);
     } catch (e: any) {
@@ -68,7 +86,11 @@ export default function BillsPage() {
   const handleCreateFournisseur = async () => {
     if (!newName.trim()) return;
     try {
-      await createBeneficiary({ clientId: id, name: newName, isFournisseur: true });
+      await createBeneficiary({
+        clientId: id,
+        name: newName,
+        isFournisseur: true,
+      });
       setNewName("");
       setShowNew(false);
       const bens = await getBeneficiaries(id);
@@ -85,15 +107,22 @@ export default function BillsPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      <Link href={`/dashboard/client/${id}`} className="text-sm text-slate-500 hover:text-brand-800 transition-colors">
+      <Link
+        href={`/dashboard/client/${id}`}
+        className="text-sm text-slate-500 hover:text-brand-800 transition-colors"
+      >
         ← Retour à l'accueil
       </Link>
 
-      <h1 className="text-2xl font-bold text-slate-900 font-display">Paiement de factures</h1>
+      <h1 className="text-4xl font-extrabold text-slate-900 font-display">
+        Paiement de factures
+      </h1>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="card p-6 space-y-5">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Compte à débiter</label>
+          <label className="block text-sm font-extrabold font-display text-brand-steel mb-1.5 leading-normal tracking-wide">
+            Compte à débiter
+          </label>
           <select
             value={fromAccountId}
             onChange={(e) => setFromAccountId(e.target.value)}
@@ -101,13 +130,21 @@ export default function BillsPage() {
           >
             <option value="">Sélectionner un compte</option>
             {chequeAccounts.map((a) => (
-              <option key={a.id} value={a.id}>{a.name} — {a.balance.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</option>
+              <option key={a.id} value={a.id}>
+                {a.name} —{" "}
+                {a.balance.toLocaleString("fr-CA", {
+                  style: "currency",
+                  currency: "CAD",
+                })}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Fournisseur</label>
+          <label className="block text-sm font-extrabold font-display text-brand-steel mb-1.5 leading-normal tracking-wide">
+            Fournisseur
+          </label>
           <select
             value={fournisseurId}
             onChange={(e) => setFournisseurId(e.target.value)}
@@ -115,10 +152,16 @@ export default function BillsPage() {
           >
             <option value="">Sélectionner un fournisseur</option>
             {fournisseurs.map((f) => (
-              <option key={f.id} value={f.id}>{f.name}</option>
+              <option key={f.id} value={f.id}>
+                {f.name}
+              </option>
             ))}
           </select>
-          <button type="button" onClick={() => setShowNew(!showNew)} className="text-xs text-brand-800 mt-2 hover:underline cursor-pointer">
+          <button
+            type="button"
+            onClick={() => setShowNew(!showNew)}
+            className="text-xs text-brand-800 mt-2 hover:underline cursor-pointer"
+          >
             + Ajouter un fournisseur
           </button>
           {showNew && (
@@ -130,7 +173,11 @@ export default function BillsPage() {
                 placeholder="Nom du fournisseur"
                 className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none"
               />
-              <button type="button" onClick={handleCreateFournisseur} className="px-4 py-2 bg-brand-800 text-white rounded-lg text-sm font-semibold hover:bg-brand-950 transition-colors cursor-pointer">
+              <button
+                type="button"
+                onClick={handleCreateFournisseur}
+                className="btn-primary text-sm py-2 px-4"
+              >
                 Ajouter
               </button>
             </div>
@@ -138,7 +185,9 @@ export default function BillsPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Montant ($)</label>
+          <label className="block text-sm font-extrabold font-display text-brand-steel mb-1.5 leading-normal tracking-wide">
+            Montant ($)
+          </label>
           <input
             type="number"
             min="0"
@@ -150,13 +199,18 @@ export default function BillsPage() {
           />
         </div>
 
-        {error && <p className="text-sm text-red-500 bg-red-50 px-4 py-2 rounded-lg">{error}</p>}
-        {message && <p className="text-sm text-emerald-600 bg-emerald-50 px-4 py-2 rounded-lg">{message}</p>}
+        {error && (
+          <p className="text-sm text-red-500 bg-red-50 px-4 py-2 rounded-lg">
+            {error}
+          </p>
+        )}
+        {message && (
+          <p className="text-sm text-emerald-600 bg-emerald-50 px-4 py-2 rounded-lg">
+            {message}
+          </p>
+        )}
 
-        <button
-          type="submit"
-          className="w-full py-3 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 cursor-pointer"
-        >
+        <button type="submit" className="w-full btn-primary py-3">
           Payer la facture
         </button>
       </form>
@@ -168,9 +222,21 @@ export default function BillsPage() {
         onConfirm={handleConfirm}
         onCancel={() => setShowConfirm(false)}
       >
-        <p>Compte à débiter : <strong>{fromAccount?.name}</strong></p>
-        <p>Fournisseur : <strong>{fournisseur?.name}</strong></p>
-        <p>Montant : <strong>{amt.toLocaleString("fr-CA", { style: "currency", currency: "CAD" })}</strong></p>
+        <p>
+          Compte à débiter : <strong>{fromAccount?.name}</strong>
+        </p>
+        <p>
+          Fournisseur : <strong>{fournisseur?.name}</strong>
+        </p>
+        <p>
+          Montant :{" "}
+          <strong>
+            {amt.toLocaleString("fr-CA", {
+              style: "currency",
+              currency: "CAD",
+            })}
+          </strong>
+        </p>
       </ConfirmModal>
     </div>
   );
