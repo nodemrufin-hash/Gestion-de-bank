@@ -45,6 +45,9 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #1f4e6b;
   }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
 }
 
 @layer components {
