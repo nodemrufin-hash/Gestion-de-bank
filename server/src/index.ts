@@ -4,7 +4,11 @@
  * Configure les middlewares (CORS, parsing JSON/urlencoded), monte les routes
  * de l'API sous `/api`, sert le build du frontend en production, puis démarre
  * l'écoute HTTP et initialise la base de données.
+ *
+ * `dotenv/config` charge les variables du fichier `.env` (ex: ANTHROPIC_API_KEY)
+ * — importé en premier pour qu'elles soient disponibles partout.
  */
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "path";
