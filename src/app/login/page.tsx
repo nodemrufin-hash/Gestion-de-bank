@@ -41,7 +41,10 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col" style={{ backgroundColor: "#EDE8D0" }}>
+    <main
+      className="min-h-screen flex flex-col"
+      style={{ backgroundColor: "#dce6ee" }}
+    >
       <header className="px-6 py-5">
         <Logo variant="dark" size="md" />
       </header>
@@ -49,15 +52,19 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-white/60 p-8 sm:p-10">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-slate-900 font-display">
+            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 font-display mb-4">
               Connexion
             </h1>
-            <p className="text-slate-500 mt-2 text-sm">Accédez à vos comptes avec votre courriel.</p>
+            <p className="text-slate-500 mt-2 text-sm">
+              Accédez à vos comptes avec votre courriel.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Courriel</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Courriel
+              </label>
               <input
                 type="email"
                 value={email}
@@ -67,7 +74,9 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Mot de passe</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Mot de passe
+              </label>
               <input
                 type="password"
                 value={password}
@@ -78,26 +87,32 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-xl px-4 py-3">{error}</p>
+              <p className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                {error}
+              </p>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50"
+              className="w-full py-3.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 cursor-pointer"
             >
               {loading ? "Connexion..." : "Se connecter"}
             </button>
           </form>
 
           <p className="text-xs text-slate-400 text-center mt-4">
-            Démo : un client existant (ex. <span className="font-medium">alice.tremblay@email.ca</span>) · mot de passe{" "}
-            <span className="font-medium">Test1234!</span>
+            Démo : un client existant (ex.{" "}
+            <span className="font-medium">alice.tremblay@email.ca</span>) · mot
+            de passe <span className="font-medium">Test1234!</span>
           </p>
 
           <p className="text-center text-sm text-slate-500 mt-6">
             Pas encore de profil ?{" "}
-            <Link href="/register" className="font-semibold text-brand-800 hover:text-brand-950">
+            <Link
+              href="/register"
+              className="font-semibold text-brand-800 hover:text-brand-950"
+            >
               Ouvrir un compte
             </Link>
           </p>

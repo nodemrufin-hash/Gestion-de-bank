@@ -76,7 +76,12 @@ export default function RegisterPage() {
     try {
       const { id } = await createClient(data);
       // Connexion automatique après inscription.
-      setClientSession({ id, firstName: data.firstName, lastName: data.lastName, email: data.email });
+      setClientSession({
+        id,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+      });
       router.push(`/dashboard/client/${id}`);
     } catch (err: any) {
       setServerError(err.message || "Une erreur est survenue.");
@@ -94,7 +99,7 @@ export default function RegisterPage() {
   return (
     <main
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor: "#EDE8D0" }}
+      style={{ backgroundColor: "#dce6ee" }}
     >
       <header className="px-6 py-5">
         <Logo variant="dark" size="md" />
@@ -103,9 +108,7 @@ export default function RegisterPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-xl bg-white rounded-3xl shadow-sm border border-white/60 p-8 sm:p-10">
           <div className="mb-8 text-center">
-            <h1
-              className="text-3xl font-bold text-slate-900 font-display"
-            >
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 font-display mb-4">
               Ouvrir un compte
             </h1>
             <p className="text-slate-500 mt-2 text-sm">
@@ -319,7 +322,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 mt-2"
+              className="w-full py-3.5 bg-brand-800 text-white rounded-xl font-semibold hover:bg-brand-950 transition-colors disabled:opacity-50 mt-2 cursor-pointer"
             >
               {submitting ? "Création du compte..." : "Créer mon compte"}
             </button>
