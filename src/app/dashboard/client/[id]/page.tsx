@@ -20,6 +20,7 @@ import {
   User,
 } from "lucide-react";
 import { getClient, getClientBalances } from "@/lib/api";
+import AssistantChat from "@/components/dashboard/AssistantChat";
 
 /** Tuiles de navigation de l'espace client (chemins relatifs à la page client). */
 const TILES = [
@@ -100,10 +101,13 @@ export default function ClientHomePage() {
           </p>
         </div>
       </div>
+      {/* Assistant conversationnel */}
+      <AssistantChat clientId={id} firstName={client?.firstName} />
+
       {/* Tuiles de navigation */}
       <div>
         <h2 className="text-lg font-semibold text-slate-900 mb-4">
-          Que souhaitez-vous faire ?
+          Accès rapide
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           {TILES.map((t) => {

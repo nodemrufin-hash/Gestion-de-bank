@@ -117,3 +117,13 @@ export const deleteAdmin = (id: string, data: { currentEmail: string; currentPas
 
 // --- Account detail ---
 export const getAccount = (id: string) => request<any>(`/accounts/${id}`);
+
+// --- Assistant IA ---
+export const askAssistant = (
+  clientId: string,
+  messages: { role: "user" | "assistant"; content: string }[]
+) =>
+  request<{ reply: string }>("/assistant", {
+    method: "POST",
+    body: JSON.stringify({ clientId, messages }),
+  });
