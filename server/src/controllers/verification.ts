@@ -9,7 +9,7 @@
 import { Request, Response } from "express";
 import type { Database } from "sql.js";
 import { getDb, saveDb } from "../database/database";
-import { sendVerificationEmail } from "../mailer";
+import { sendVerificationEmail, sendWelcomeEmail } from "../mailer";
 
 /** Durée de validité d'un code de vérification (15 minutes, en millisecondes). */
 const CODE_TTL_MS = 15 * 60 * 1000;
@@ -87,6 +87,10 @@ export async function verifyEmail(req: Request, res: Response) {
     [client.id]
   );
   saveDb();
+
+  // Email de bienvenue (n'empêche pas la réponse en cas d'échec d'envoi).
+  await sendWelcomeEmail(client.email, client.firstName);
+
   res.json({ success: true });
 }
 

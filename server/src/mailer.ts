@@ -65,3 +65,53 @@ export async function sendVerificationEmail(
     return { sent: false };
   }
 }
+
+/**
+ * Envoie un email de bienvenue au client, une fois son adresse vérifiée.
+ * Ne bloque jamais le flux : en cas d'absence d'identifiants ou d'erreur, on se
+ * contente d'un message console.
+ * @returns `{ sent }` — `true` si un email a réellement été expédié.
+ */
+export async function sendWelcomeEmail(
+  to: string,
+  firstName: string
+): Promise<{ sent: boolean }> {
+  if (!mailerConfigured()) {
+    console.log(`[BIENVENUE] Email de bienvenue pour ${to} (Gmail non configuré — non envoyé)`);
+    return { sent: false };
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+
+  try {
+    await transporter.sendMail({
+      from: `"Banque Libéo" <${process.env.GMAIL_USER}>`,
+      to,
+      subject: "Bienvenue chez Libéo ! 🎉",
+      text: `Bonjour ${firstName},\n\nVotre adresse a été vérifiée : votre compte Libéo est maintenant actif. Bienvenue !\n\nVous pouvez dès à présent vous connecter et profiter de vos comptes, faire des virements (internes ou Interac), payer vos factures, fixer des objectifs d'épargne et discuter avec notre assistant.\n\nAu plaisir de vous compter parmi nous,\n— L'équipe Libéo`,
+      html: `<div style="font-family:Arial,sans-serif;color:#0f172a">
+<h2 style="color:#1f4e6b">Bienvenue chez Libéo, ${firstName} ! 🎉</h2>
+<p>Votre adresse a été vérifiée : votre compte est maintenant <strong>actif</strong>.</p>
+<p>Vous pouvez dès à présent :</p>
+<ul>
+  <li>consulter vos comptes et vos soldes ;</li>
+  <li>faire des virements internes ou Interac ;</li>
+  <li>payer vos factures ;</li>
+  <li>fixer des objectifs d'épargne ;</li>
+  <li>échanger avec notre assistant.</li>
+</ul>
+<p>Au plaisir de vous compter parmi nous,<br>— L'équipe Libéo</p>
+</div>`,
+    });
+    return { sent: true };
+  } catch (e: any) {
+    console.error("Échec de l'envoi de l'email de bienvenue:", e?.message || e);
+    return { sent: false };
+  }
+}
