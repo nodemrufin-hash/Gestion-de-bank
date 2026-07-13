@@ -22,7 +22,11 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: "Erreur inconnue" }));
-    throw new Error(err.error || `HTTP ${res.status}`);
+    const error = new Error(err.error || `HTTP ${res.status}`);
+    // On attache le corps d'erreur pour permettre au client d'inspecter des
+    // indicateurs (ex: `needsVerification` lors d'une connexion non vérifiée).
+    (error as any).info = err;
+    throw error;
   }
   return res.json();
 }
@@ -39,6 +43,18 @@ export const loginAdmin = (email: string, password: string) =>
     body: JSON.stringify({ email, password }),
   });
 
+// --- Vérification du courriel ---
+export const verifyEmail = (email: string, code: string) =>
+  request<{ success: boolean; alreadyVerified?: boolean }>("/auth/verify-email", {
+    method: "POST",
+    body: JSON.stringify({ email, code }),
+  });
+export const resendVerification = (email: string) =>
+  request<{ success: boolean; sent?: boolean; alreadyVerified?: boolean }>(
+    "/auth/resend-verification",
+    { method: "POST", body: JSON.stringify({ email }) }
+  );
+
 // --- Clients ---
 export const getClients = () => request<any[]>("/clients");
 export const createClient = (data: {
@@ -52,7 +68,11 @@ export const createClient = (data: {
   province: string;
   postalCode: string;
   dateNaissance: string;
-}) => request<{ success: boolean; id: string }>("/clients", { method: "POST", body: JSON.stringify(data) });
+}) =>
+  request<{ success: boolean; id: string; emailVerificationRequired?: boolean; emailSent?: boolean }>(
+    "/clients",
+    { method: "POST", body: JSON.stringify(data) }
+  );
 export const getClient = (id: string) => request<any>(`/clients/${id}`);
 export const getClientAccounts = (clientId: string) => request<any[]>(`/clients/${clientId}/accounts`);
 export const getClientBalances = (clientId: string) => request<any[]>(`/clients/${clientId}/balances`);
