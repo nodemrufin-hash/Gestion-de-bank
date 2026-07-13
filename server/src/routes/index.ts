@@ -14,6 +14,7 @@ import * as goals from "../controllers/goals";
 import * as alerts from "../controllers/alerts";
 import * as admin from "../controllers/admin";
 import * as auth from "../controllers/auth";
+import * as assistant from "../controllers/assistant";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -21,6 +22,9 @@ const upload = multer({ storage: multer.memoryStorage() });
 // --- Authentification ---
 router.post("/auth/login", auth.clientLogin);
 router.post("/auth/admin/login", auth.adminLogin);
+
+// --- Assistant IA ---
+router.post("/assistant", assistant.chat);
 
 // --- Clients ---
 router.get("/clients", clients.getAll);

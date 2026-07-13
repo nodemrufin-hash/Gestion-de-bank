@@ -11,6 +11,16 @@ import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
 
 /**
+ * Fonds disponibles d'un compte pour un débit. Pour une carte de crédit, le
+ * solde est négatif (dette) : le disponible est le solde plus la limite de
+ * crédit. Pour les autres comptes, c'est simplement le solde.
+ */
+function availableFunds(acc: any): number {
+  if (acc.type === "credit") return acc.balance + (acc.creditLimit || 0);
+  return acc.balance;
+}
+
+/**
  * Renvoie l'historique des transactions complétées d'un compte (100 plus récentes).
  * @param req `params.accountId` : identifiant du compte.
  * @param res Tableau JSON des transactions (hors transactions futures).
@@ -85,7 +95,7 @@ export async function internalTransfer(req: Request, res: Response) {
   const fromAcc = fromStmt.getAsObject() as any;
   fromStmt.free();
 
-  if (fromAcc.balance < amt) {
+  if (availableFunds(fromAcc) < amt) {
     res.status(400).json({ error: "Solde insuffisant" });
     return;
   }
@@ -144,7 +154,7 @@ export async function interacTransfer(req: Request, res: Response) {
   const fromAcc = fromStmt.getAsObject() as any;
   fromStmt.free();
 
-  if (fromAcc.balance < amt) {
+  if (availableFunds(fromAcc) < amt) {
     res.status(400).json({ error: "Solde insuffisant" });
     return;
   }
@@ -158,6 +168,7 @@ export async function interacTransfer(req: Request, res: Response) {
   const now = new Date().toISOString().split("T")[0];
   const desc = description || `Virement Interac à ${ben.name}`;
 
+  // Débit du compte source (transaction sortante).
   const txId = uuid();
   db.run(
     "INSERT INTO transactions (id, accountId, date, description, amount, type, category, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -165,8 +176,46 @@ export async function interacTransfer(req: Request, res: Response) {
   );
   db.run("UPDATE accounts SET balance = balance - ? WHERE id = ?", [amt, fromAccountId]);
 
+  // Interac entre clients : si le courriel du bénéficiaire correspond à un
+  // client existant, on crédite son compte Chèques (dépôt reçu). Sinon, on
+  // garde le comportement d'un transfert externe (simple débit).
+  let delivered = false;
+  const recipientEmail = ben.email ? String(ben.email).trim().toLowerCase() : "";
+  if (recipientEmail) {
+    const cliStmt = db.prepare("SELECT * FROM clients WHERE lower(email) = ?");
+    cliStmt.bind([recipientEmail]);
+    const recipient = cliStmt.step() ? (cliStmt.getAsObject() as any) : null;
+    cliStmt.free();
+
+    if (recipient) {
+      const accStmt = db.prepare(
+        "SELECT * FROM accounts WHERE clientId = ? AND type = 'cheque' LIMIT 1"
+      );
+      accStmt.bind([recipient.id]);
+      const toAcc = accStmt.step() ? (accStmt.getAsObject() as any) : null;
+      accStmt.free();
+
+      // On évite de créditer le compte qui vient d'être débité (auto-virement).
+      if (toAcc && toAcc.id !== fromAccountId) {
+        // Nom de l'expéditeur (client propriétaire du compte source).
+        const sndStmt = db.prepare("SELECT firstName, lastName FROM clients WHERE id = ?");
+        sndStmt.bind([fromAcc.clientId]);
+        const sender = sndStmt.step() ? (sndStmt.getAsObject() as any) : null;
+        sndStmt.free();
+        const senderName = sender ? `${sender.firstName} ${sender.lastName}` : "un client";
+        const inDesc = `Virement Interac reçu de ${senderName}${description ? ` — ${description}` : ""}`;
+        db.run(
+          "INSERT INTO transactions (id, accountId, date, description, amount, type, category, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+          [uuid(), toAcc.id, now, inDesc, amt, "credit", toAcc.category, "complete"]
+        );
+        db.run("UPDATE accounts SET balance = balance + ? WHERE id = ?", [amt, toAcc.id]);
+        delivered = true;
+      }
+    }
+  }
+
   saveDb();
-  res.json({ success: true, transactionId: txId });
+  res.json({ success: true, transactionId: txId, delivered });
 }
 
 /**
@@ -192,7 +241,7 @@ export async function payBill(req: Request, res: Response) {
   const fromAcc = fromStmt.getAsObject() as any;
   fromStmt.free();
 
-  if (fromAcc.balance < amt) {
+  if (availableFunds(fromAcc) < amt) {
     res.status(400).json({ error: "Solde insuffisant" });
     return;
   }

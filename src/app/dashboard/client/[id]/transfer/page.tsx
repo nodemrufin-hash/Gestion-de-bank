@@ -133,9 +133,11 @@ export default function TransferPage() {
   };
 
   const allAccounts = accounts.filter(
-    (a) => a.category === "depenses" || a.category === "epargne",
+    (a) =>
+      a.category === "depenses" ||
+      a.category === "epargne" ||
+      a.type === "credit",
   );
-  const chequeAccounts = accounts.filter((a) => a.type === "cheque");
 
   const fromAccount = accounts.find((a) => a.id === fromAccountId);
   const toAccount = accounts.find((a) => a.id === toAccountId);
@@ -183,15 +185,17 @@ export default function TransferPage() {
             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-50 outline-none"
           >
             <option value="">Sélectionner un compte</option>
-            {chequeAccounts.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name} —{" "}
-                {a.balance.toLocaleString("fr-CA", {
-                  style: "currency",
-                  currency: "CAD",
-                })}
-              </option>
-            ))}
+            {allAccounts
+              .filter((a) => a.id !== toAccountId)
+              .map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name} —{" "}
+                  {a.balance.toLocaleString("fr-CA", {
+                    style: "currency",
+                    currency: "CAD",
+                  })}
+                </option>
+              ))}
           </select>
         </div>
 
