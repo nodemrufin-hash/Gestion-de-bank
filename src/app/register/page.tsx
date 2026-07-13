@@ -90,6 +90,24 @@ export default function RegisterPage() {
         : "border-slate-200 focus:border-brand-600"
     }`;
 
+  // Bornes de la date de naissance : entre 120 ans et 18 ans (majorité requise
+  // pour ouvrir un compte). Limite aussi l'année à 4 chiffres dans le champ.
+  const today = new Date();
+  const maxBirthDate = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate(),
+  )
+    .toISOString()
+    .split("T")[0];
+  const minBirthDate = new Date(
+    today.getFullYear() - 120,
+    today.getMonth(),
+    today.getDate(),
+  )
+    .toISOString()
+    .split("T")[0];
+
   return (
     <main
       className="min-h-screen flex flex-col"
@@ -295,9 +313,18 @@ export default function RegisterPage() {
               </label>
               <input
                 type="date"
+                min={minBirthDate}
+                max={maxBirthDate}
                 className={fieldClass(!!errors.dateNaissance)}
                 {...register("dateNaissance", {
                   required: "Date de naissance requise.",
+                  validate: (v) => {
+                    if (!v) return "Date de naissance requise.";
+                    if (v > maxBirthDate)
+                      return "Vous devez avoir au moins 18 ans.";
+                    if (v < minBirthDate) return "Année invalide.";
+                    return true;
+                  },
                 })}
               />
               {errors.dateNaissance && (
