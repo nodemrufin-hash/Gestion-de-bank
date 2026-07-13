@@ -12,7 +12,6 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import Logo from "@/components/common/Logo";
 import { createClient } from "@/lib/api";
-import { setClientSession } from "@/lib/auth";
 import { useState } from "react";
 
 const PROVINCES = [
@@ -74,15 +73,10 @@ export default function RegisterPage() {
     setServerError("");
     setSubmitting(true);
     try {
-      const { id } = await createClient(data);
-      // Connexion automatique après inscription.
-      setClientSession({
-        id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-      });
-      router.push(`/dashboard/client/${id}`);
+      await createClient(data);
+      // Le compte doit d'abord être vérifié par courriel : on redirige vers
+      // l'écran de saisie du code.
+      router.push(`/verify?email=${encodeURIComponent(data.email)}`);
     } catch (err: any) {
       setServerError(err.message || "Une erreur est survenue.");
       setSubmitting(false);
@@ -95,6 +89,24 @@ export default function RegisterPage() {
         ? "border-red-400 focus:border-red-400"
         : "border-slate-200 focus:border-brand-600"
     }`;
+
+  // Bornes de la date de naissance : entre 120 ans et 18 ans (majorité requise
+  // pour ouvrir un compte). Limite aussi l'année à 4 chiffres dans le champ.
+  const today = new Date();
+  const maxBirthDate = new Date(
+    today.getFullYear() - 18,
+    today.getMonth(),
+    today.getDate(),
+  )
+    .toISOString()
+    .split("T")[0];
+  const minBirthDate = new Date(
+    today.getFullYear() - 120,
+    today.getMonth(),
+    today.getDate(),
+  )
+    .toISOString()
+    .split("T")[0];
 
   return (
     <main
@@ -301,9 +313,18 @@ export default function RegisterPage() {
               </label>
               <input
                 type="date"
+                min={minBirthDate}
+                max={maxBirthDate}
                 className={fieldClass(!!errors.dateNaissance)}
                 {...register("dateNaissance", {
                   required: "Date de naissance requise.",
+                  validate: (v) => {
+                    if (!v) return "Date de naissance requise.";
+                    if (v > maxBirthDate)
+                      return "Vous devez avoir au moins 18 ans.";
+                    if (v < minBirthDate) return "Année invalide.";
+                    return true;
+                  },
                 })}
               />
               {errors.dateNaissance && (

@@ -15,6 +15,7 @@ import * as alerts from "../controllers/alerts";
 import * as admin from "../controllers/admin";
 import * as auth from "../controllers/auth";
 import * as assistant from "../controllers/assistant";
+import * as verification from "../controllers/verification";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -22,6 +23,10 @@ const upload = multer({ storage: multer.memoryStorage() });
 // --- Authentification ---
 router.post("/auth/login", auth.clientLogin);
 router.post("/auth/admin/login", auth.adminLogin);
+
+// --- Vérification du courriel ---
+router.post("/auth/verify-email", verification.verifyEmail);
+router.post("/auth/resend-verification", verification.resendVerification);
 
 // --- Assistant IA ---
 router.post("/assistant", assistant.chat);

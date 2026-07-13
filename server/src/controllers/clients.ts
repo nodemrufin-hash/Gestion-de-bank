@@ -10,6 +10,7 @@ import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
 import { generateEmptyAccounts } from "../database/seed";
 import { hashPassword } from "./auth";
+import { issueVerificationCode } from "./verification";
 
 const REQUIRED_FIELDS = [
   "firstName",
@@ -73,7 +74,12 @@ export async function create(req: Request, res: Response) {
   generateEmptyAccounts(db, id);
 
   saveDb();
-  res.status(201).json({ success: true, id });
+
+  // Vérification du courriel : génère et envoie un code. Le compte reste
+  // « non vérifié » tant que le client n'a pas confirmé (connexion bloquée).
+  const { sent } = await issueVerificationCode(db, id, normalizedEmail, firstName);
+
+  res.status(201).json({ success: true, id, emailVerificationRequired: true, emailSent: sent });
 }
 
 /**

@@ -7,7 +7,7 @@
  * client puis redirige vers le profil du client. Un lien distinct mène à la
  * connexion administrateur.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/common/Logo";
@@ -20,7 +20,15 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Message de confirmation après une vérification réussie (redirigé avec ?verified=1).
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("verified") === "1") {
+      setNotice("Votre courriel est vérifié. Vous pouvez maintenant vous connecter.");
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +43,11 @@ export default function LoginPage() {
       setClientSession(client);
       router.push(`/dashboard/client/${client.id}`);
     } catch (err: any) {
+      // Compte non vérifié : rediriger vers la saisie du code.
+      if (err.info?.needsVerification) {
+        router.push(`/verify?email=${encodeURIComponent(err.info.email || email.trim())}`);
+        return;
+      }
       setError(err.message || "Connexion impossible.");
       setLoading(false);
     }
@@ -59,6 +72,12 @@ export default function LoginPage() {
               Accédez à vos comptes avec votre courriel.
             </p>
           </div>
+
+          {notice && (
+            <p className="text-sm text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 mb-4">
+              {notice}
+            </p>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>

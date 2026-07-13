@@ -53,9 +53,26 @@ export async function ensureAuthSetup(db: Database): Promise<void> {
     db.run("ALTER TABLE clients ADD COLUMN password TEXT");
   }
 
+  // Migration : colonnes de vérification du courriel (ajoutées ultérieurement).
+  if (!columnExists(db, "clients", "emailVerified")) {
+    db.run("ALTER TABLE clients ADD COLUMN emailVerified INTEGER NOT NULL DEFAULT 0");
+  }
+  if (!columnExists(db, "clients", "verificationCode")) {
+    db.run("ALTER TABLE clients ADD COLUMN verificationCode TEXT");
+  }
+  if (!columnExists(db, "clients", "verificationExpires")) {
+    db.run("ALTER TABLE clients ADD COLUMN verificationExpires TEXT");
+  }
+
   // Backfill : mot de passe par défaut pour les clients sans mot de passe.
   const defaultHash = hashPassword(DEFAULT_CLIENT_PASSWORD);
   db.run("UPDATE clients SET password = ? WHERE password IS NULL OR password = ''", [defaultHash]);
+
+  // Backfill : les clients déjà présents (démo/seed, sans code en attente) sont
+  // considérés comme vérifiés afin de ne pas bloquer leur connexion.
+  db.run(
+    "UPDATE clients SET emailVerified = 1 WHERE emailVerified = 0 AND (verificationCode IS NULL OR verificationCode = '')"
+  );
 
   // Compte admin par défaut.
   const existing = db.exec("SELECT COUNT(*) as cnt FROM admins WHERE email = ?", [ADMIN_EMAIL]);
@@ -93,6 +110,16 @@ export async function clientLogin(req: Request, res: Response) {
 
   if (!client || !comparePassword(String(password), client.password)) {
     res.status(401).json({ error: "Courriel ou mot de passe incorrect." });
+    return;
+  }
+
+  // Le courriel doit être vérifié avant de pouvoir se connecter.
+  if (Number(client.emailVerified) !== 1) {
+    res.status(403).json({
+      error: "Veuillez vérifier votre courriel avant de vous connecter.",
+      needsVerification: true,
+      email: client.email,
+    });
     return;
   }
 

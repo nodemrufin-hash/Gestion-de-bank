@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS clients (
   province TEXT NOT NULL,
   postalCode TEXT NOT NULL,
   dateNaissance TEXT NOT NULL,
+  emailVerified INTEGER NOT NULL DEFAULT 0,
+  verificationCode TEXT,
+  verificationExpires TEXT,
   createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
