@@ -58,6 +58,7 @@ Solde total : ${cad(total)}
 
 Consignes :
 - Réponds toujours en français, de façon claire, courtoise et concise.
+- N'utilise jamais d'emoji ni d'émoticône dans tes réponses.
 - Appuie-toi sur les données ci-dessus pour répondre (soldes, comptes...).
 - Tu es purement informatif : tu n'effectues aucune opération. Pour agir, oriente le client vers la bonne section : « Virement » (interne ou Interac), « Factures », « Dépôt / Retrait », « Objectifs », « Mes comptes », « Produits » ou « Mon profil ».
 - Ne divulgue jamais d'informations d'un autre client. Ne parle que des données fournies.
@@ -96,7 +97,7 @@ function ruleBasedReply(question: string, client: any, accounts: any[]): string 
 • vous donner votre solde total ou le solde d'un compte précis ;
 • lister vos comptes ;
 • vous expliquer comment faire un virement interne ou Interac, payer une facture, faire un dépôt/retrait ou créer un objectif d'épargne.
-Posez-moi votre question 🙂`;
+Posez-moi votre question.`;
   }
 
   // Solde d'un compte précis.
@@ -148,11 +149,11 @@ Posez-moi votre question 🙂`;
 
   // Remerciement.
   if (/\bmerci\b/.test(m)) {
-    return `Avec plaisir ! N'hésitez pas si vous avez d'autres questions. 🙂`;
+    return `Avec plaisir ! N'hésitez pas si vous avez d'autres questions.`;
   }
 
   // Repli général.
-  return `Je ne suis pas sûr d'avoir bien compris. Je peux vous donner votre solde total ou par compte, lister vos comptes, ou vous expliquer comment faire un virement, un Interac, payer une facture ou faire un dépôt. Reformulez votre question et j'essaierai de vous aider 🙂`;
+  return `Je ne suis pas sûr d'avoir bien compris. Je peux vous donner votre solde total ou par compte, lister vos comptes, ou vous expliquer comment faire un virement, un Interac, payer une facture ou faire un dépôt. Reformulez votre question et j'essaierai de vous aider.`;
 }
 
 /**
