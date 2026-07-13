@@ -31,8 +31,8 @@ export default function AdminLoginPage() {
     }
     setLoading(true);
     try {
-      const { email: adminEmail } = await loginAdmin(email.trim(), password);
-      setAdminSession(adminEmail);
+      const { email: adminEmail, token } = await loginAdmin(email.trim(), password);
+      setAdminSession(adminEmail, token);
       router.push("/admin");
     } catch (err: any) {
       setError(err.message || "Connexion impossible.");

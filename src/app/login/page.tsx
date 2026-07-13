@@ -39,8 +39,8 @@ export default function LoginPage() {
     }
     setLoading(true);
     try {
-      const { client } = await loginClient(email.trim(), password);
-      setClientSession(client);
+      const { client, token } = await loginClient(email.trim(), password);
+      setClientSession(client, token);
       router.push(`/dashboard/client/${client.id}`);
     } catch (err: any) {
       // Compte non vérifié : rediriger vers la saisie du code.

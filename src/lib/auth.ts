@@ -1,10 +1,12 @@
 /**
  * Gestion de la session d'authentification côté navigateur.
  *
- * La session (rôle + identité) est conservée dans `localStorage`. Il s'agit
- * d'une simulation : aucun jeton signé n'est utilisé, la protection des routes
- * est faite côté client à partir de ces valeurs. Les pages utilisent
- * `getSession` pour décider d'afficher ou de rediriger vers la connexion.
+ * La session (rôle + identité + jeton) est conservée dans `localStorage`. Le
+ * `token` est émis par le backend à la connexion et renvoyé dans l'en-tête
+ * `Authorization: Bearer …` à chaque appel API (voir `src/lib/api.ts`), ce qui
+ * permet au serveur d'autoriser l'appelant. La protection visuelle des routes
+ * reste faite côté client à partir de ces valeurs ; l'autorisation réelle est
+ * appliquée côté serveur.
  */
 
 const STORAGE_KEY = "banque_session";
@@ -15,12 +17,14 @@ export type ClientSession = {
   clientId: string;
   name: string;
   email: string;
+  token: string;
 };
 
 /** Session de l'administrateur connecté. */
 export type AdminSession = {
   role: "admin";
   email: string;
+  token: string;
 };
 
 export type Session = ClientSession | AdminSession;
@@ -36,21 +40,30 @@ export function getSession(): Session | null {
   }
 }
 
-/** Enregistre la session d'un client connecté. */
-export function setClientSession(client: { id: string; firstName: string; lastName: string; email: string }): void {
+/** Enregistre la session d'un client connecté (avec son jeton). */
+export function setClientSession(
+  client: { id: string; firstName: string; lastName: string; email: string },
+  token: string
+): void {
   const session: ClientSession = {
     role: "client",
     clientId: client.id,
     name: `${client.firstName} ${client.lastName}`,
     email: client.email,
+    token,
   };
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
 }
 
-/** Enregistre la session de l'administrateur connecté. */
-export function setAdminSession(email: string): void {
-  const session: AdminSession = { role: "admin", email };
+/** Enregistre la session de l'administrateur connecté (avec son jeton). */
+export function setAdminSession(email: string, token: string): void {
+  const session: AdminSession = { role: "admin", email, token };
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+}
+
+/** Renvoie le jeton de la session courante, ou `null` si non connecté. */
+export function getToken(): string | null {
+  return getSession()?.token ?? null;
 }
 
 /** Efface la session courante (déconnexion). */
