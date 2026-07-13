@@ -14,6 +14,7 @@ import {
   resetAllData,
   getClients,
   resetClient,
+  deleteClient,
   getAdmins,
   createAdmin,
   deleteAdmin,
@@ -105,6 +106,25 @@ export default function AdminPage() {
     try {
       await resetClient(clientId);
       setMessage("Profil client réinitialisé.");
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
+  const handleDeleteClient = async (clientId: string, name: string) => {
+    if (
+      !window.confirm(
+        `Supprimer définitivement le client « ${name} » et toutes ses données ? Cette action est irréversible.`,
+      )
+    )
+      return;
+    setMessage("");
+    setError("");
+    try {
+      await deleteClient(clientId);
+      setMessage(`Client « ${name} » supprimé.`);
+      const cls = await getClients();
+      setClients(cls);
     } catch (e: any) {
       setError(e.message);
     }
@@ -326,12 +346,22 @@ export default function AdminPage() {
                 </p>
                 <p className="text-xs text-slate-400">{c.email}</p>
               </div>
-              <button
-                onClick={() => handleResetClient(c.id)}
-                className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-100 transition-colors cursor-pointer"
-              >
-                Réinitialiser
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleResetClient(c.id)}
+                  className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-100 transition-colors cursor-pointer"
+                >
+                  Réinitialiser
+                </button>
+                <button
+                  onClick={() =>
+                    handleDeleteClient(c.id, `${c.firstName} ${c.lastName}`)
+                  }
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors cursor-pointer"
+                >
+                  Supprimer
+                </button>
+              </div>
             </div>
           ))}
         </div>

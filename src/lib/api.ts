@@ -77,6 +77,7 @@ export const getClient = (id: string) => request<any>(`/clients/${id}`);
 export const getClientAccounts = (clientId: string) => request<any[]>(`/clients/${clientId}/accounts`);
 export const getClientBalances = (clientId: string) => request<any[]>(`/clients/${clientId}/balances`);
 export const resetClient = (clientId: string) => request<any>(`/clients/${clientId}/reset`, { method: "POST" });
+export const deleteClient = (clientId: string) => request<any>(`/clients/${clientId}`, { method: "DELETE" });
 
 // --- Transactions ---
 export const getTransactions = (accountId: string) => request<any[]>(`/accounts/${accountId}/transactions`);
