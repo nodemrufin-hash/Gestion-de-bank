@@ -20,6 +20,7 @@ import {
   deleteAdmin,
 } from "@/lib/api";
 import { getSession, logout } from "@/lib/auth";
+import ConfirmModal from "@/components/common/ConfirmModal";
 
 /** Composant de la page d'administration (paramètres globaux et réinitialisations). */
 export default function AdminPage() {
@@ -35,6 +36,42 @@ export default function AdminPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  // Fenêtre modale de confirmation (remplace window.confirm / window.prompt).
+  const [confirmState, setConfirmState] = useState<{
+    title: string;
+    message: string;
+    confirmLabel: string;
+    needsPassword: boolean;
+    onConfirm: (password: string) => Promise<void>;
+  } | null>(null);
+  const [modalPwd, setModalPwd] = useState("");
+  const [modalError, setModalError] = useState("");
+  const [modalLoading, setModalLoading] = useState(false);
+
+  const closeModal = () => {
+    setConfirmState(null);
+    setModalPwd("");
+    setModalError("");
+    setModalLoading(false);
+  };
+
+  const runModalConfirm = async () => {
+    if (!confirmState) return;
+    if (confirmState.needsPassword && !modalPwd) {
+      setModalError("Veuillez saisir votre mot de passe administrateur.");
+      return;
+    }
+    setModalLoading(true);
+    setModalError("");
+    try {
+      await confirmState.onConfirm(modalPwd);
+      closeModal();
+    } catch (e: any) {
+      setModalError(e.message || "Une erreur est survenue.");
+      setModalLoading(false);
+    }
+  };
 
   const load = () => {
     Promise.all([getParameters(), getClients(), getAdmins()]).then(
@@ -85,49 +122,56 @@ export default function AdminPage() {
     }
   };
 
-  const handleResetAll = async () => {
-    if (
-      !window.confirm(
-        "Voulez-vous vraiment réinitialiser TOUTES les données ? Cette action est irréversible.",
-      )
-    )
-      return;
-    try {
-      await resetAllData();
-      setMessage("Toutes les données ont été réinitialisées.");
-      load();
-    } catch (e: any) {
-      setError(e.message);
-    }
-  };
-
-  const handleResetClient = async (clientId: string) => {
-    if (!window.confirm("Réinitialiser ce profil client ?")) return;
-    try {
-      await resetClient(clientId);
-      setMessage("Profil client réinitialisé.");
-    } catch (e: any) {
-      setError(e.message);
-    }
-  };
-
-  const handleDeleteClient = async (clientId: string, name: string) => {
-    if (
-      !window.confirm(
-        `Supprimer définitivement le client « ${name} » et toutes ses données ? Cette action est irréversible.`,
-      )
-    )
-      return;
+  const handleResetAll = () => {
     setMessage("");
     setError("");
-    try {
-      await deleteClient(clientId);
-      setMessage(`Client « ${name} » supprimé.`);
-      const cls = await getClients();
-      setClients(cls);
-    } catch (e: any) {
-      setError(e.message);
-    }
+    setConfirmState({
+      title: "Réinitialiser toutes les données",
+      message:
+        "Efface toutes les données et régénère les profils avec leurs transactions initiales. Cette action est irréversible.",
+      confirmLabel: "Tout réinitialiser",
+      needsPassword: false,
+      onConfirm: async () => {
+        await resetAllData();
+        setMessage("Toutes les données ont été réinitialisées.");
+        load();
+      },
+    });
+  };
+
+  const handleResetClient = (clientId: string, name: string) => {
+    setMessage("");
+    setError("");
+    setConfirmState({
+      title: "Réinitialiser le profil",
+      message: `Réinitialiser le profil de « ${name} » ? Ses données (comptes, transactions...) seront effacées, mais le profil est conservé.`,
+      confirmLabel: "Réinitialiser",
+      needsPassword: false,
+      onConfirm: async () => {
+        await resetClient(clientId);
+        setMessage("Profil client réinitialisé.");
+      },
+    });
+  };
+
+  const handleDeleteClient = (clientId: string, name: string) => {
+    setMessage("");
+    setError("");
+    setConfirmState({
+      title: "Supprimer le client",
+      message: `Supprimer définitivement « ${name} » et toutes ses données ? Cette action est irréversible. Saisissez votre mot de passe administrateur pour confirmer.`,
+      confirmLabel: "Supprimer",
+      needsPassword: true,
+      onConfirm: async (password) => {
+        await deleteClient(clientId, {
+          currentEmail,
+          currentPassword: password,
+        });
+        setMessage(`Client « ${name} » supprimé.`);
+        const cls = await getClients();
+        setClients(cls);
+      },
+    });
   };
 
   const handleCreateAdmin = async (e: React.FormEvent) => {
@@ -156,19 +200,21 @@ export default function AdminPage() {
     }
   };
 
-  const handleDeleteAdmin = async (id: string, email: string) => {
-    const pwd = window.prompt(
-      `Pour supprimer l'administrateur « ${email} », saisissez VOTRE mot de passe administrateur :`,
-    );
-    if (!pwd) return;
-    try {
-      await deleteAdmin(id, { currentEmail, currentPassword: pwd });
-      setMessage("Administrateur supprimé.");
-      const adm = await getAdmins();
-      setAdmins(adm);
-    } catch (e: any) {
-      setError(e.message);
-    }
+  const handleDeleteAdmin = (id: string, email: string) => {
+    setMessage("");
+    setError("");
+    setConfirmState({
+      title: "Supprimer l'administrateur",
+      message: `Supprimer l'administrateur « ${email} » ? Saisissez votre mot de passe administrateur pour confirmer.`,
+      confirmLabel: "Supprimer",
+      needsPassword: true,
+      onConfirm: async (password) => {
+        await deleteAdmin(id, { currentEmail, currentPassword: password });
+        setMessage("Administrateur supprimé.");
+        const adm = await getAdmins();
+        setAdmins(adm);
+      },
+    });
   };
 
   const paramLabels: Record<string, string> = {
@@ -348,7 +394,9 @@ export default function AdminPage() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleResetClient(c.id)}
+                  onClick={() =>
+                    handleResetClient(c.id, `${c.firstName} ${c.lastName}`)
+                  }
                   className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-100 transition-colors cursor-pointer"
                 >
                   Réinitialiser
@@ -383,6 +431,28 @@ export default function AdminPage() {
           Réinitialiser toutes les données
         </button>
       </section>
+
+      <ConfirmModal
+        open={!!confirmState}
+        title={confirmState?.title || ""}
+        confirmLabel={confirmState?.confirmLabel || "Confirmer"}
+        loading={modalLoading}
+        onConfirm={runModalConfirm}
+        onCancel={closeModal}
+      >
+        <p>{confirmState?.message}</p>
+        {confirmState?.needsPassword && (
+          <input
+            type="password"
+            value={modalPwd}
+            onChange={(e) => setModalPwd(e.target.value)}
+            placeholder="Votre mot de passe administrateur"
+            autoFocus
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-brand-600"
+          />
+        )}
+        {modalError && <p className="text-sm text-red-500">{modalError}</p>}
+      </ConfirmModal>
     </div>
   );
 }

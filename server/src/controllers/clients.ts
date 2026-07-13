@@ -9,7 +9,7 @@ import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
 import { generateEmptyAccounts } from "../database/seed";
-import { hashPassword } from "./auth";
+import { hashPassword, verifyAdminCredentials } from "./auth";
 import { issueVerificationCode } from "./verification";
 
 const REQUIRED_FIELDS = [
@@ -193,13 +193,21 @@ export async function resetClient(req: Request, res: Response) {
 /**
  * Supprime définitivement un client : efface d'abord toutes ses données
  * (transactions, comptes, objectifs, alertes, bénéficiaires) puis le profil
- * lui-même. Action irréversible, réservée à l'administrateur.
- * @param req `params.id` : identifiant du client.
- * @param res `{ success: true }` ; 404 si le client n'existe pas.
+ * lui-même. Action irréversible, réservée à l'administrateur : exige le mot de
+ * passe de l'admin courant pour confirmer.
+ * @param req `params.id` + corps `{ currentEmail, currentPassword }`.
+ * @param res `{ success: true }` ; 401 (confirmation invalide) ; 404 (client absent).
  */
 export async function deleteClient(req: Request, res: Response) {
   const db = await getDb();
   const clientId = req.params.id as string;
+  const { currentEmail, currentPassword } = req.body ?? {};
+
+  // Confirmation : l'admin courant doit re-saisir son mot de passe.
+  if (!verifyAdminCredentials(db, currentEmail, currentPassword)) {
+    res.status(401).json({ error: "Mot de passe administrateur incorrect." });
+    return;
+  }
 
   // Vérifie l'existence du client.
   const exists = db.exec("SELECT 1 FROM clients WHERE id = ?", [clientId]);
