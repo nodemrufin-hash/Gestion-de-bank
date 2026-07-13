@@ -78,7 +78,7 @@ export default function AssistantChat({
         {messages.length === 0 && (
           <div className="text-sm text-slate-500">
             <p className="mb-3">
-              Bonjour{firstName ? ` ${firstName}` : ""} 👋 Comment puis-je vous
+              Bonjour{firstName ? ` ${firstName}` : ""}, comment puis-je vous
               aider ?
             </p>
             <div className="flex flex-wrap gap-2">
