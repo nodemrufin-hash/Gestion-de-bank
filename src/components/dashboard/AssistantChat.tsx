@@ -71,12 +71,12 @@ export default function AssistantChat({
         </span>
         <div>
           <p className="font-semibold text-slate-900">Assistant Libéo</p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Posez une question sur vos comptes
           </p>
         </div>
         <ChevronDown
-          className={`w-5 h-5 text-slate-400 ml-auto shrink-0 transition-transform duration-200 ${
+          className={`w-5 h-5 text-slate-500 ml-auto shrink-0 transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
           strokeWidth={2}
@@ -129,7 +129,9 @@ export default function AssistantChat({
 
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-slate-100 text-slate-500 rounded-2xl px-4 py-2.5 text-sm">
+                {/* slate-600 (et non 500) : sur le gris du fond, il faut un
+                    texte plus foncé pour rester lisible (contraste WCAG AA). */}
+                <div className="bg-slate-100 text-slate-600 rounded-2xl px-4 py-2.5 text-sm">
                   L'assistant réfléchit…
                 </div>
               </div>

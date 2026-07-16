@@ -23,7 +23,7 @@ export default function ProfilPage() {
 
   if (!client)
     return (
-      <div className="text-center py-20 text-slate-400">Chargement...</div>
+      <div className="text-center py-20 text-slate-500">Chargement...</div>
     );
 
   const groups = [
@@ -90,7 +90,7 @@ export default function ProfilPage() {
             <div className="grid sm:grid-cols-2 gap-3">
               {group.fields.map((f) => (
                 <div key={f.label} className="card p-4">
-                  <p className="text-xs text-slate-400 mb-1">{f.label}</p>
+                  <p className="text-xs text-slate-500 mb-1">{f.label}</p>
                   <p className="text-sm font-bold text-slate-900">{f.value}</p>
                 </div>
               ))}

@@ -62,10 +62,14 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="adminEmail"
+                className="block text-sm font-medium text-slate-700 mb-1"
+              >
                 Courriel
               </label>
               <input
+                id="adminEmail"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -74,10 +78,14 @@ export default function AdminLoginPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="adminPassword"
+                className="block text-sm font-medium text-slate-700 mb-1"
+              >
                 Mot de passe
               </label>
               <input
+                id="adminPassword"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

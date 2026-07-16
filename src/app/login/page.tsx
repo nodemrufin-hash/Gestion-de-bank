@@ -141,7 +141,7 @@ export default function LoginPage() {
               Ouvrir un compte
             </Link>
           </p>
-          <p className="text-center text-xs text-slate-400 mt-3">
+          <p className="text-center text-xs text-slate-500 mt-3">
             <Link href="/admin/login" className="hover:text-brand-800">
               Accès administrateur
             </Link>

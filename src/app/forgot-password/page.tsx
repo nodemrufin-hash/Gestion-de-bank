@@ -195,7 +195,7 @@ function ForgotPasswordContent() {
         </form>
       )}
 
-      <p className="text-center text-xs text-slate-400 mt-6">
+      <p className="text-center text-xs text-slate-500 mt-6">
         <Link href="/login" className="hover:text-brand-800">
           Retour à la connexion
         </Link>
@@ -215,7 +215,7 @@ export default function ForgotPasswordPage() {
         <Logo variant="dark" size="md" />
       </header>
       <div className="flex-1 flex items-center justify-center px-6 py-10">
-        <Suspense fallback={<div className="text-slate-400">Chargement...</div>}>
+        <Suspense fallback={<div className="text-slate-500">Chargement...</div>}>
           <ForgotPasswordContent />
         </Suspense>
       </div>

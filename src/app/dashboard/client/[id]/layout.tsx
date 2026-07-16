@@ -82,7 +82,7 @@ export default function ClientSpaceLayout({
   // Tant que la garde n'a pas validé l'accès, on n'affiche pas le contenu.
   if (!authorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-400">
+      <div className="min-h-screen flex items-center justify-center text-slate-500">
         Chargement...
       </div>
     );

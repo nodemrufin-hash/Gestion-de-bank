@@ -88,7 +88,7 @@ export default function ComptesPage() {
           <h1 className="text-4xl font-extrabold text-slate-900 font-display">
             Mes comptes
           </h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-slate-500 text-sm mt-1">
             Vue d'ensemble de vos finances
           </p>
         </div>
@@ -151,7 +151,7 @@ export default function ComptesPage() {
                   <p className="font-semibold text-slate-900 group-hover:text-brand-800 transition-colors">
                     {acc.name}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     {acc.accountNumber} · {acc.type}
                   </p>
                 </div>
@@ -166,7 +166,7 @@ export default function ComptesPage() {
                 })}
               </p>
               {acc.creditLimit > 0 && (
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Limite :{" "}
                   {acc.creditLimit.toLocaleString("fr-CA", {
                     style: "currency",
@@ -215,7 +215,7 @@ export default function ComptesPage() {
                     <p className="text-sm font-medium text-slate-900">
                       {acc?.name || "Compte"}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-500">
                       Notifie si le solde descend sous ce seuil
                     </p>
                   </div>

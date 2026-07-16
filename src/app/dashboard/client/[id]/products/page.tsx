@@ -95,7 +95,7 @@ export default function ProductsPage() {
 
   if (loading)
     return (
-      <div className="text-center py-20 text-slate-400">Chargement...</div>
+      <div className="text-center py-20 text-slate-500">Chargement...</div>
     );
 
   return (
@@ -139,7 +139,7 @@ export default function ProductsPage() {
                 {product.description}
               </p>
               <div className="flex items-baseline justify-between border-t border-slate-100 pt-3">
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   {product.rateLabel}
                 </span>
                 <span className="text-sm font-bold font-display text-brand-800">

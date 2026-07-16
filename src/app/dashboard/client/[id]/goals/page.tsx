@@ -138,7 +138,7 @@ export default function GoalsPage() {
       )}
 
       {goals.length === 0 ? (
-        <p className="text-slate-400 text-center py-12">
+        <p className="text-slate-500 text-center py-12">
           Aucun objectif d'épargne.
         </p>
       ) : (
@@ -171,7 +171,7 @@ export default function GoalsPage() {
                       currency: "CAD",
                     })}
                   </span>
-                  <span className="text-slate-400 font-normal">
+                  <span className="text-slate-500 font-normal">
                     {g.targetAmount.toLocaleString("fr-CA", {
                       style: "currency",
                       currency: "CAD",

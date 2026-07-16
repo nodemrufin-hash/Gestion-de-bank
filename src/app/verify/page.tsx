@@ -113,7 +113,7 @@ function VerifyContent() {
         >
           Renvoyer le code
         </button>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           <Link href="/login" className="hover:text-brand-800">
             Retour à la connexion
           </Link>
@@ -134,7 +134,7 @@ export default function VerifyPage() {
         <Logo variant="dark" size="md" />
       </header>
       <div className="flex-1 flex items-center justify-center px-6 py-10">
-        <Suspense fallback={<div className="text-slate-400">Chargement...</div>}>
+        <Suspense fallback={<div className="text-slate-500">Chargement...</div>}>
           <VerifyContent />
         </Suspense>
       </div>
