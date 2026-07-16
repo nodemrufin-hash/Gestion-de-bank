@@ -12,6 +12,7 @@ import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 import type { Database } from "sql.js";
 import { getDb, saveDb } from "../database/database";
+import { createSession, destroySession } from "../auth/sessions";
 
 /** Mot de passe attribué par défaut aux clients de démonstration (seed). */
 export const DEFAULT_CLIENT_PASSWORD = "Test1234!";
@@ -123,9 +124,12 @@ export async function clientLogin(req: Request, res: Response) {
     return;
   }
 
+  const token = createSession({ role: "client", clientId: client.id, email: client.email });
+
   res.json({
     success: true,
     role: "client",
+    token,
     client: {
       id: client.id,
       firstName: client.firstName,
@@ -160,7 +164,20 @@ export async function adminLogin(req: Request, res: Response) {
     return;
   }
 
-  res.json({ success: true, role: "admin", email: admin.email });
+  const token = createSession({ role: "admin", email: admin.email });
+
+  res.json({ success: true, role: "admin", token, email: admin.email });
+}
+
+/**
+ * Déconnexion : détruit la session associée au jeton `Bearer` présenté.
+ * Toujours `{ success: true }` (idempotent, même si le jeton est absent).
+ */
+export async function logout(req: Request, res: Response) {
+  const header = req.headers.authorization ?? "";
+  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  if (token) destroySession(token);
+  res.json({ success: true });
 }
 
 /**

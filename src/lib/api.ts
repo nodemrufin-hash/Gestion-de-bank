@@ -6,10 +6,19 @@
  * au-dessus du helper `request`. L'URL est configurable via
  * `NEXT_PUBLIC_API_URL`, avec repli sur `http://localhost:3001/api`.
  */
+import { getToken } from "./auth";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+
+/** En-tête `Authorization` si un jeton de session est disponible, sinon `{}`. */
+function authHeader(): Record<string, string> {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 /**
  * Helper générique d'appel à l'API : sérialise/parse le JSON et gère les erreurs.
+ * Ajoute automatiquement l'en-tête `Authorization` de la session courante.
  * @param path Chemin relatif à `BASE_URL` (ex: `/clients`).
  * @param options Options `fetch` (méthode, corps, en-têtes…).
  * @returns La réponse JSON typée `T`.
@@ -17,7 +26,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
  */
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json", ...options?.headers },
+    headers: { "Content-Type": "application/json", ...authHeader(), ...options?.headers },
     ...options,
   });
   if (!res.ok) {
@@ -33,15 +42,18 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
 // --- Authentification ---
 export const loginClient = (email: string, password: string) =>
-  request<{ success: boolean; role: "client"; client: { id: string; firstName: string; lastName: string; email: string } }>(
+  request<{ success: boolean; role: "client"; token: string; client: { id: string; firstName: string; lastName: string; email: string } }>(
     "/auth/login",
     { method: "POST", body: JSON.stringify({ email, password }) }
   );
 export const loginAdmin = (email: string, password: string) =>
-  request<{ success: boolean; role: "admin"; email: string }>("/auth/admin/login", {
+  request<{ success: boolean; role: "admin"; token: string; email: string }>("/auth/admin/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
+/** Déconnexion : invalide le jeton courant côté serveur (best-effort). */
+export const logoutApi = () =>
+  request<{ success: boolean }>("/auth/logout", { method: "POST" });
 
 // --- Vérification du courriel ---
 export const verifyEmail = (email: string, code: string) =>
@@ -104,7 +116,12 @@ export const withdraw = (data: { accountId: string; amount: number; description?
   request<any>("/transactions/withdraw", { method: "POST", body: JSON.stringify(data) });
 
 export const depositCheque = (data: FormData) =>
-  fetch(`${BASE_URL}/transactions/deposit-cheque`, { method: "POST", body: data }).then((r) => r.json());
+  // Pas de Content-Type manuel : le navigateur pose la limite multipart lui-même.
+  fetch(`${BASE_URL}/transactions/deposit-cheque`, {
+    method: "POST",
+    headers: authHeader(),
+    body: data,
+  }).then((r) => r.json());
 
 export const payCreditCard = (accountId: string, data: { fromAccountId: string; amount: number }) =>
   request<any>(`/accounts/${accountId}/pay-credit`, { method: "POST", body: JSON.stringify(data) });
