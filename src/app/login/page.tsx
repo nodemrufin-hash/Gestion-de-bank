@@ -132,6 +132,14 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* Indice affiché uniquement si la démo publique le configure
+              (NEXT_PUBLIC_DEMO_HINT). Rien n'est écrit en dur dans le code. */}
+          {process.env.NEXT_PUBLIC_DEMO_HINT && (
+            <p className="text-xs text-slate-400 text-center mt-4 whitespace-pre-line">
+              {process.env.NEXT_PUBLIC_DEMO_HINT}
+            </p>
+          )}
+
           <p className="text-center text-sm text-slate-500 mt-6">
             Pas encore de profil ?{" "}
             <Link
