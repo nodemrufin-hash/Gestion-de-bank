@@ -135,10 +135,14 @@ export default function RegisterPage() {
           >
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Prénom
                 </label>
                 <input
+                  id="firstName"
                   type="text"
                   placeholder="Alice"
                   className={fieldClass(!!errors.firstName)}
@@ -151,10 +155,14 @@ export default function RegisterPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Nom
                 </label>
                 <input
+                  id="lastName"
                   type="text"
                   placeholder="Tremblay"
                   className={fieldClass(!!errors.lastName)}
@@ -170,10 +178,14 @@ export default function RegisterPage() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Courriel
                 </label>
                 <input
+                  id="email"
                   type="email"
                   placeholder="alice@email.ca"
                   className={fieldClass(!!errors.email)}
@@ -193,10 +205,14 @@ export default function RegisterPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Téléphone
                 </label>
                 <input
+                  id="phone"
                   type="tel"
                   placeholder="514-555-0101"
                   className={fieldClass(!!errors.phone)}
@@ -218,10 +234,14 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-slate-700 mb-1"
+              >
                 Mot de passe
               </label>
               <input
+                id="password"
                 type="password"
                 placeholder="Au moins 8 caractères"
                 className={fieldClass(!!errors.password)}
@@ -238,10 +258,14 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-slate-700 mb-1"
+              >
                 Adresse
               </label>
               <input
+                id="address"
                 type="text"
                 placeholder="123 Rue Saint-Jacques"
                 className={fieldClass(!!errors.address)}
@@ -256,10 +280,14 @@ export default function RegisterPage() {
 
             <div className="grid sm:grid-cols-3 gap-4">
               <div className="sm:col-span-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="city"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Ville
                 </label>
                 <input
+                  id="city"
                   type="text"
                   placeholder="Montréal"
                   className={fieldClass(!!errors.city)}
@@ -272,10 +300,17 @@ export default function RegisterPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="province"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Province
                 </label>
-                <select className={fieldClass(false)} {...register("province")}>
+                <select
+                  id="province"
+                  className={fieldClass(false)}
+                  {...register("province")}
+                >
                   {PROVINCES.map((p) => (
                     <option key={p} value={p}>
                       {p}
@@ -284,10 +319,14 @@ export default function RegisterPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="postalCode"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
                   Code postal
                 </label>
                 <input
+                  id="postalCode"
                   type="text"
                   placeholder="H2Y 1L9"
                   className={fieldClass(!!errors.postalCode)}
@@ -308,10 +347,14 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="dateNaissance"
+                className="block text-sm font-medium text-slate-700 mb-1"
+              >
                 Date de naissance
               </label>
               <input
+                id="dateNaissance"
                 type="date"
                 min={minBirthDate}
                 max={maxBirthDate}
