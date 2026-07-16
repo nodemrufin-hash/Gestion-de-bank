@@ -23,10 +23,14 @@ export default function LoginPage() {
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Message de confirmation après une vérification réussie (redirigé avec ?verified=1).
+  // Messages de confirmation après une vérification (?verified=1) ou une
+  // réinitialisation du mot de passe (?reset=1).
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("verified") === "1") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("verified") === "1") {
       setNotice("Votre courriel est vérifié. Vous pouvez maintenant vous connecter.");
+    } else if (params.get("reset") === "1") {
+      setNotice("Votre mot de passe a été modifié. Connectez-vous avec le nouveau.");
     }
   }, []);
 
@@ -103,6 +107,14 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-50"
               />
+              <p className="text-right mt-1.5">
+                <Link
+                  href={`/forgot-password${email.trim() ? `?email=${encodeURIComponent(email.trim())}` : ""}`}
+                  className="text-xs font-semibold text-brand-800 hover:text-brand-950"
+                >
+                  Mot de passe oublié ?
+                </Link>
+              </p>
             </div>
 
             {error && (

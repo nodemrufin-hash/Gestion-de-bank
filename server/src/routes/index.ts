@@ -21,6 +21,7 @@ import * as admin from "../controllers/admin";
 import * as auth from "../controllers/auth";
 import * as assistant from "../controllers/assistant";
 import * as verification from "../controllers/verification";
+import * as password from "../controllers/password";
 import {
   authenticate,
   requireAdmin,
@@ -47,6 +48,10 @@ router.post("/auth/logout", auth.logout);
 // --- Vérification du courriel (public) ---
 router.post("/auth/verify-email", verification.verifyEmail);
 router.post("/auth/resend-verification", verification.resendVerification);
+
+// --- Mot de passe oublié (public : le client n'est pas connecté) ---
+router.post("/auth/forgot-password", password.forgotPassword);
+router.post("/auth/reset-password", password.resetPassword);
 
 // --- Assistant IA (sur son propre profil ; l'admin peut consulter) ---
 router.post("/assistant", requireSelfOrAdmin(fromBody("clientId")), assistant.chat);

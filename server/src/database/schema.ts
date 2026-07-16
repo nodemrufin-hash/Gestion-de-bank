@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS clients (
   emailVerified INTEGER NOT NULL DEFAULT 0,
   verificationCode TEXT,
   verificationExpires TEXT,
+  resetCode TEXT,
+  resetExpires TEXT,
   createdAt TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

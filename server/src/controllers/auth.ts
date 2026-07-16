@@ -65,6 +65,14 @@ export async function ensureAuthSetup(db: Database): Promise<void> {
     db.run("ALTER TABLE clients ADD COLUMN verificationExpires TEXT");
   }
 
+  // Migration : colonnes de réinitialisation du mot de passe.
+  if (!columnExists(db, "clients", "resetCode")) {
+    db.run("ALTER TABLE clients ADD COLUMN resetCode TEXT");
+  }
+  if (!columnExists(db, "clients", "resetExpires")) {
+    db.run("ALTER TABLE clients ADD COLUMN resetExpires TEXT");
+  }
+
   // Backfill : mot de passe par défaut pour les clients sans mot de passe.
   const defaultHash = hashPassword(DEFAULT_CLIENT_PASSWORD);
   db.run("UPDATE clients SET password = ? WHERE password IS NULL OR password = ''", [defaultHash]);

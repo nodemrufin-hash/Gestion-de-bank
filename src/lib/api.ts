@@ -61,6 +61,20 @@ export const verifyEmail = (email: string, code: string) =>
     method: "POST",
     body: JSON.stringify({ email, code }),
   });
+// --- Mot de passe oublié ---
+/** Demande l'envoi d'un code de réinitialisation (réponse identique si l'adresse est inconnue). */
+export const forgotPassword = (email: string) =>
+  request<{ success: boolean }>("/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+/** Définit un nouveau mot de passe à partir du code reçu par courriel. */
+export const resetPassword = (email: string, code: string, newPassword: string) =>
+  request<{ success: boolean }>("/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ email, code, newPassword }),
+  });
+
 export const resendVerification = (email: string) =>
   request<{ success: boolean; sent?: boolean; alreadyVerified?: boolean }>(
     "/auth/resend-verification",
