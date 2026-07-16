@@ -38,6 +38,7 @@ router.get("/clients/:id", clients.getById);
 router.get("/clients/:id/accounts", clients.getAccounts);
 router.get("/clients/:id/balances", clients.getBalancesByCategory);
 router.post("/clients/:id/reset", clients.resetClient);
+router.delete("/clients/:id", clients.deleteClient);
 
 // --- Transactions ---
 router.get("/accounts/:accountId/transactions", transactions.getByAccount);

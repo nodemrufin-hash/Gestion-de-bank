@@ -9,7 +9,7 @@ import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
 import { getDb, saveDb } from "../database/database";
 import { generateEmptyAccounts } from "../database/seed";
-import { hashPassword } from "./auth";
+import { hashPassword, verifyAdminCredentials } from "./auth";
 import { issueVerificationCode } from "./verification";
 
 const REQUIRED_FIELDS = [
@@ -185,6 +185,52 @@ export async function resetClient(req: Request, res: Response) {
   db.run("DELETE FROM low_balance_alerts WHERE clientId = ?", [clientId]);
   db.run("DELETE FROM beneficiaries WHERE clientId = ?", [clientId]);
   db.run("DELETE FROM accounts WHERE clientId = ?", [clientId]);
+
+  saveDb();
+  res.json({ success: true });
+}
+
+/**
+ * Supprime définitivement un client : efface d'abord toutes ses données
+ * (transactions, comptes, objectifs, alertes, bénéficiaires) puis le profil
+ * lui-même. Action irréversible, réservée à l'administrateur : exige le mot de
+ * passe de l'admin courant pour confirmer.
+ * @param req `params.id` + corps `{ currentEmail, currentPassword }`.
+ * @param res `{ success: true }` ; 401 (confirmation invalide) ; 404 (client absent).
+ */
+export async function deleteClient(req: Request, res: Response) {
+  const db = await getDb();
+  const clientId = req.params.id as string;
+  const { currentEmail, currentPassword } = req.body ?? {};
+
+  // Confirmation : l'admin courant doit re-saisir son mot de passe.
+  if (!verifyAdminCredentials(db, currentEmail, currentPassword)) {
+    res.status(401).json({ error: "Mot de passe administrateur incorrect." });
+    return;
+  }
+
+  // Vérifie l'existence du client.
+  const exists = db.exec("SELECT 1 FROM clients WHERE id = ?", [clientId]);
+  if (exists.length === 0 || exists[0].values.length === 0) {
+    res.status(404).json({ error: "Client non trouvé" });
+    return;
+  }
+
+  // Supprime les données liées (les clés étrangères en cascade ne sont pas
+  // activées par défaut sous sql.js, on nettoie donc explicitement).
+  const accStmt = db.prepare("SELECT id FROM accounts WHERE clientId = ?");
+  accStmt.bind([clientId]);
+  while (accStmt.step()) {
+    const acc = accStmt.getAsObject() as any;
+    db.run("DELETE FROM transactions WHERE accountId = ?", [acc.id]);
+  }
+  accStmt.free();
+
+  db.run("DELETE FROM saving_goals WHERE clientId = ?", [clientId]);
+  db.run("DELETE FROM low_balance_alerts WHERE clientId = ?", [clientId]);
+  db.run("DELETE FROM beneficiaries WHERE clientId = ?", [clientId]);
+  db.run("DELETE FROM accounts WHERE clientId = ?", [clientId]);
+  db.run("DELETE FROM clients WHERE id = ?", [clientId]);
 
   saveDb();
   res.json({ success: true });

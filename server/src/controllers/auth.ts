@@ -168,7 +168,7 @@ export async function adminLogin(req: Request, res: Response) {
  * Sert à confirmer une action sensible (création/suppression) en redemandant
  * le mot de passe de l'admin courant.
  */
-function verifyAdminCredentials(db: Database, email: unknown, password: unknown): boolean {
+export function verifyAdminCredentials(db: Database, email: unknown, password: unknown): boolean {
   if (!email || !password) return false;
   const stmt = db.prepare("SELECT password FROM admins WHERE email = ?");
   stmt.bind([String(email).trim().toLowerCase()]);
