@@ -107,7 +107,7 @@ export default function AdminPage() {
 
   if (!authorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-400">
+      <div className="min-h-screen flex items-center justify-center text-slate-500">
         Chargement...
       </div>
     );
@@ -300,7 +300,7 @@ export default function AdminPage() {
         {/* Liste des admins */}
         <div className="card divide-y divide-slate-100 mb-4">
           {admins.length === 0 ? (
-            <p className="p-4 text-sm text-slate-400">Aucun administrateur.</p>
+            <p className="p-4 text-sm text-slate-500">Aucun administrateur.</p>
           ) : (
             admins.map((a) => (
               <div key={a.id} className="p-4 flex items-center justify-between">
@@ -308,7 +308,7 @@ export default function AdminPage() {
                   <p className="font-bold font-display text-slate-900 text-sm">
                     {a.email}
                   </p>
-                  <p className="text-xs text-slate-400">Administrateur</p>
+                  <p className="text-xs text-slate-500">Administrateur</p>
                 </div>
                 <button
                   onClick={() => handleDeleteAdmin(a.id, a.email)}
@@ -390,7 +390,7 @@ export default function AdminPage() {
                 <p className="font-bold font-display text-slate-900 text-sm">
                   {c.firstName} {c.lastName}
                 </p>
-                <p className="text-xs text-slate-400">{c.email}</p>
+                <p className="text-xs text-slate-500">{c.email}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button

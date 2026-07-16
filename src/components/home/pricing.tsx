@@ -90,7 +90,7 @@ export default function Pricing() {
                 >
                   {plan.price}
                 </span>
-                <span className="text-sm text-slate-400">{plan.period}</span>
+                <span className="text-sm text-slate-500">{plan.period}</span>
               </div>
               <p className="text-sm text-slate-500 mb-6">{plan.description}</p>
               <ul className="flex flex-col gap-3 mb-8 flex-1">

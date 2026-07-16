@@ -97,11 +97,11 @@ export default function AccountDetailPage() {
 
   if (loading)
     return (
-      <div className="text-center py-20 text-slate-400">Chargement...</div>
+      <div className="text-center py-20 text-slate-500">Chargement...</div>
     );
   if (!account)
     return (
-      <div className="text-center py-20 text-slate-400">Compte introuvable</div>
+      <div className="text-center py-20 text-slate-500">Compte introuvable</div>
     );
 
   const isCredit = account.type === "credit";
@@ -122,12 +122,12 @@ export default function AccountDetailPage() {
             <h1 className="text-4xl font-extrabold text-slate-900 font-display">
               {account.name}
             </h1>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-500 text-sm">
               {account.accountNumber} · {account.type}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
               Solde
             </p>
             <p className="text-3xl font-extrabold font-display text-slate-900">
@@ -137,7 +137,7 @@ export default function AccountDetailPage() {
               })}
             </p>
             {account.creditLimit > 0 && (
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Limite :{" "}
                 {account.creditLimit.toLocaleString("fr-CA", {
                   style: "currency",
@@ -254,7 +254,7 @@ export default function AccountDetailPage() {
                   <p className="font-bold font-display text-slate-900">
                     {tx.description}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     Prévue le {tx.scheduledDate}{" "}
                     {tx.isRecurring ? `· ${tx.frequency}` : ""}
                   </p>
@@ -288,7 +288,7 @@ export default function AccountDetailPage() {
                   <p className="font-bold font-display text-slate-900">
                     {tx.description}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     Fréquence : {tx.frequency}
                   </p>
                 </div>
@@ -311,7 +311,7 @@ export default function AccountDetailPage() {
           Historique des transactions
         </h2>
         {transactions.length === 0 ? (
-          <p className="text-slate-400 text-sm">Aucune transaction.</p>
+          <p className="text-slate-500 text-sm">Aucune transaction.</p>
         ) : (
           <div className="card divide-y divide-slate-100">
             {transactions.map((tx: any) => (
@@ -323,7 +323,7 @@ export default function AccountDetailPage() {
                   <p className="font-bold font-display text-slate-900 text-sm">
                     {tx.description}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     {tx.date} · {tx.category}
                   </p>
                 </div>

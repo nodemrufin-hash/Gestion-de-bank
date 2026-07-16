@@ -124,7 +124,7 @@ export default function ClientHomePage() {
                 <p className="font-semibold text-slate-900 mt-3 group-hover:text-brand-800 transition-colors">
                   {t.label}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">{t.desc}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{t.desc}</p>
               </Link>
             );
           })}

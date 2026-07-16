@@ -53,7 +53,7 @@ export default function DashboardPage() {
 
   if (!authorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-400">
+      <div className="min-h-screen flex items-center justify-center text-slate-500">
         Chargement...
       </div>
     );
@@ -88,7 +88,7 @@ export default function DashboardPage() {
         </p>
 
         {loading ? (
-          <div className="text-center py-20 text-slate-400">Chargement...</div>
+          <div className="text-center py-20 text-slate-500">Chargement...</div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {clients.map((client) => (
@@ -106,10 +106,10 @@ export default function DashboardPage() {
                     <p className="font-semibold text-slate-900 group-hover:text-brand-800 transition-colors">
                       {client.firstName} {client.lastName}
                     </p>
-                    <p className="text-xs text-slate-400">{client.email}</p>
+                    <p className="text-xs text-slate-500">{client.email}</p>
                   </div>
                 </div>
-                <div className="text-xs text-slate-400">
+                <div className="text-xs text-slate-500">
                   {client.city}, {client.province}
                 </div>
               </Link>
