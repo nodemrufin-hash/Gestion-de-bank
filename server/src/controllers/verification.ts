@@ -15,7 +15,7 @@ import { sendVerificationEmail, sendWelcomeEmail } from "../mailer";
 const CODE_TTL_MS = 15 * 60 * 1000;
 
 /** Génère un code numérique à 6 chiffres (sous forme de chaîne). */
-function generateCode(): string {
+export function generateCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 

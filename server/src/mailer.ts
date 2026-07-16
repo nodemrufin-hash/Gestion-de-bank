@@ -67,6 +67,54 @@ export async function sendVerificationEmail(
 }
 
 /**
+ * Envoie le code de réinitialisation du mot de passe.
+ * @returns `{ sent }` — `false` en mode démonstration (identifiants absents) ou
+ *          en cas d'échec d'envoi ; le code est alors affiché dans la console.
+ */
+export async function sendPasswordResetEmail(
+  to: string,
+  firstName: string,
+  code: string
+): Promise<{ sent: boolean }> {
+  if (!mailerConfigured()) {
+    console.log(
+      `[MOT DE PASSE] Code de réinitialisation pour ${to} : ${code} (Gmail non configuré — email non envoyé)`
+    );
+    return { sent: false };
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+
+  try {
+    await transporter.sendMail({
+      from: `"Banque Libéo" <${process.env.GMAIL_USER}>`,
+      to,
+      subject: "Réinitialisation de votre mot de passe Libéo",
+      text: `Bonjour ${firstName},\n\nVoici votre code pour réinitialiser votre mot de passe : ${code}\nIl est valable 15 minutes.\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message : votre mot de passe reste inchangé.\n\n— L'équipe Libéo`,
+      html: `<div style="font-family:Arial,sans-serif;color:#0f172a">
+<p>Bonjour ${firstName},</p>
+<p>Voici votre code pour réinitialiser votre mot de passe :</p>
+<p style="font-size:28px;font-weight:bold;letter-spacing:4px">${code}</p>
+<p>Il est valable 15 minutes.</p>
+<p style="color:#64748b;font-size:13px">Si vous n'êtes pas à l'origine de cette demande, ignorez ce message : votre mot de passe reste inchangé.</p>
+<p>— L'équipe Libéo</p>
+</div>`,
+    });
+    return { sent: true };
+  } catch (e: any) {
+    console.error("Échec de l'envoi de l'email de réinitialisation:", e?.message || e);
+    console.log(`[MOT DE PASSE] Code pour ${to} : ${code} (envoi échoué — repli console)`);
+    return { sent: false };
+  }
+}
+
+/**
  * Envoie un email de bienvenue au client, une fois son adresse vérifiée.
  * Ne bloque jamais le flux : en cas d'absence d'identifiants ou d'erreur, on se
  * contente d'un message console.
