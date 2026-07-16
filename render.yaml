@@ -1,0 +1,68 @@
+# Déploiement sur Render (https://render.com) — palier gratuit.
+#
+# Deux services : l'API Express et le frontend Next.js.
+# Sur Render : New > Blueprint, puis sélectionner ce dépôt ; ce fichier est lu
+# automatiquement. Les valeurs marquées `sync: false` sont à saisir dans le
+# tableau de bord (elles ne sont jamais versionnées).
+#
+# ATTENTION — palier gratuit : le disque est éphémère et le service s'endort
+# après ~15 min d'inactivité. La base SQLite est donc recréée à chaque
+# démarrage : les comptes de démonstration reviennent automatiquement (seed au
+# démarrage), mais les données créées par les visiteurs ne survivent pas.
+
+services:
+  # --- API (Express + SQLite) ---
+  - type: web
+    name: libeo-api
+    runtime: node
+    plan: free
+    region: ohio
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Comptes de démonstration : à définir dans le tableau de bord Render.
+      # Sans ces variables, un mot de passe aléatoire est généré au démarrage
+      # et affiché dans les logs du service.
+      - key: ADMIN_EMAIL
+        value: admin@banque.ca
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DEMO_CLIENT_PASSWORD
+        sync: false
+      # Envoi des courriels (vérification, bienvenue, mot de passe oublié).
+      # Optionnel : sans ces variables, les codes s'affichent dans les logs.
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      # Optionnel : sans clé, l'assistant répond en mode local (règles).
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  # --- Frontend (Next.js) ---
+  - type: web
+    name: libeo-web
+    runtime: node
+    plan: free
+    region: ohio
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # URL de l'API, suffixe /api compris. À saisir dans le tableau de bord une
+      # fois l'API déployée, par exemple :
+      #   https://libeo-api.onrender.com/api
+      # Attention : cette variable est intégrée au build du frontend — après
+      # l'avoir modifiée, relancer un déploiement du service.
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+      # Indice de connexion affiché sur la page de connexion de la démo
+      # publique (facultatif). À saisir dans le tableau de bord, par exemple :
+      # "Démo : alice.tremblay@email.ca · mot de passe : <celui choisi>"
+      - key: NEXT_PUBLIC_DEMO_HINT
+        sync: false

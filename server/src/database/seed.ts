@@ -216,4 +216,8 @@ export async function seed(): Promise<void> {
   console.log(`${clients.length} clients créés avec leurs comptes et transactions.`);
 }
 
-seed().catch(console.error);
+// Exécution directe (`npm run seed`) uniquement : importer ce module depuis le
+// serveur ne doit pas déclencher le seed tout seul — c'est `start()` qui décide.
+if (require.main === module) {
+  seed().catch(console.error);
+}
