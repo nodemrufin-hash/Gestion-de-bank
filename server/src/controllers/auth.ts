@@ -3,24 +3,63 @@
  *
  * Gère la connexion par courriel + mot de passe haché (bcrypt). Les clients
  * s'authentifient contre la table `clients`, l'administrateur contre la table
- * `admins`. Expose aussi `ensureAuthSetup` qui prépare la base : ajout de la
- * colonne `password`, attribution d'un mot de passe par défaut aux clients de
- * démonstration et création du compte admin par défaut.
+ * `admins`. Expose aussi `ensureAuthSetup` qui prépare la base : migrations de
+ * colonnes, attribution d'un mot de passe aux clients de démonstration et
+ * création du compte administrateur.
+ *
+ * Aucun mot de passe n'est écrit en dur : ceux des comptes de démonstration
+ * proviennent de l'environnement (`ADMIN_PASSWORD`, `DEMO_CLIENT_PASSWORD`
+ * dans `server/.env`, non versionné). Sans configuration, un mot de passe
+ * aléatoire est généré et affiché une fois dans la console.
  */
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { v4 as uuid } from "uuid";
 import type { Database } from "sql.js";
 import { getDb, saveDb } from "../database/database";
 import { createSession, destroySession } from "../auth/sessions";
 
-/** Mot de passe attribué par défaut aux clients de démonstration (seed). */
-export const DEFAULT_CLIENT_PASSWORD = "Test1234!";
-/** Identifiants du compte administrateur de démonstration. */
-export const ADMIN_EMAIL = "admin@banque.ca";
-export const ADMIN_PASSWORD = "Admin1234!";
+/**
+ * Courriel du compte administrateur. Ce n'est pas un secret (c'est un simple
+ * identifiant de connexion), mais il reste configurable via `ADMIN_EMAIL`.
+ */
+export const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "admin@banque.ca")
+  .trim()
+  .toLowerCase();
 
 const SALT_ROUNDS = 10;
+
+/**
+ * Génère un mot de passe aléatoire solide. Utilisé en dernier recours, quand
+ * aucun mot de passe n'est configuré dans l'environnement : il est alors
+ * affiché une seule fois dans la console, au moment de la création du compte.
+ */
+function randomPassword(): string {
+  return crypto.randomBytes(9).toString("base64url");
+}
+
+/**
+ * Renvoie le mot de passe à utiliser pour un compte de démonstration.
+ *
+ * Il provient de l'environnement (`server/.env`, non versionné) afin de ne
+ * jamais figurer dans le code source. S'il est absent, on en génère un au
+ * hasard et on l'affiche une fois dans la console : l'application reste
+ * utilisable sans qu'aucun secret ne soit écrit en dur.
+ * @param envVar Nom de la variable d'environnement à lire.
+ * @param label Libellé affiché dans la console si un mot de passe est généré.
+ */
+function demoPassword(envVar: string, label: string): string {
+  const configured = process.env[envVar];
+  if (configured) return configured;
+
+  const generated = randomPassword();
+  console.log(
+    `[SÉCURITÉ] Aucun ${envVar} défini : mot de passe généré pour ${label} : ${generated}\n` +
+      `           Notez-le, il ne sera plus affiché. Pour le fixer, ajoutez ${envVar} dans server/.env`
+  );
+  return generated;
+}
 
 /** Hache un mot de passe en clair avec bcrypt. */
 export function hashPassword(plain: string): string {
@@ -73,9 +112,21 @@ export async function ensureAuthSetup(db: Database): Promise<void> {
     db.run("ALTER TABLE clients ADD COLUMN resetExpires TEXT");
   }
 
-  // Backfill : mot de passe par défaut pour les clients sans mot de passe.
-  const defaultHash = hashPassword(DEFAULT_CLIENT_PASSWORD);
-  db.run("UPDATE clients SET password = ? WHERE password IS NULL OR password = ''", [defaultHash]);
+  // Backfill : mot de passe pour les clients de démonstration qui n'en ont pas
+  // (issus du seed). On ne le calcule que si au moins un client est concerné,
+  // afin de ne pas générer/afficher un mot de passe inutilement.
+  const missing = db.exec(
+    "SELECT COUNT(*) FROM clients WHERE password IS NULL OR password = ''"
+  );
+  const missingCount = missing.length > 0 ? Number(missing[0].values[0][0]) : 0;
+  if (missingCount > 0) {
+    const demoHash = hashPassword(
+      demoPassword("DEMO_CLIENT_PASSWORD", `les ${missingCount} client(s) de démonstration`)
+    );
+    db.run("UPDATE clients SET password = ? WHERE password IS NULL OR password = ''", [
+      demoHash,
+    ]);
+  }
 
   // Backfill : les clients déjà présents (démo/seed, sans code en attente) sont
   // considérés comme vérifiés afin de ne pas bloquer leur connexion.
@@ -90,7 +141,7 @@ export async function ensureAuthSetup(db: Database): Promise<void> {
     db.run("INSERT INTO admins (id, email, password) VALUES (?, ?, ?)", [
       uuid(),
       ADMIN_EMAIL,
-      hashPassword(ADMIN_PASSWORD),
+      hashPassword(demoPassword("ADMIN_PASSWORD", `l'administrateur « ${ADMIN_EMAIL} »`)),
     ]);
   }
 
