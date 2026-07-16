@@ -437,7 +437,9 @@ export default function AdminPage() {
         <h2 className="text-xl font-extrabold font-display text-red-800 mb-2">
           Réinitialisation globale
         </h2>
-        <p className="text-sm text-red-600 mb-4">
+        {/* red-700 : sur le fond red-50 de la section, red-600 ne donnait que
+            4,41:1, sous le seuil WCAG AA. */}
+        <p className="text-sm text-red-700 mb-4">
           Efface toutes les données et régénère les profils avec leurs
           transactions initiales.
         </p>
