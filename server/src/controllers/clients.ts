@@ -106,16 +106,23 @@ export async function getAll(req: Request, res: Response) {
 
 /**
  * Renvoie un client par son identifiant.
+ *
+ * Les colonnes sont sélectionnées explicitement : le mot de passe haché et les
+ * codes (vérification, réinitialisation) ne sont jamais exposés, même au client
+ * concerné.
  * @param req `params.id` : identifiant du client.
- * @param res Le client en JSON, ou 404 s'il n'existe pas.
+ * @param res Le client en JSON (sans données sensibles), ou 404 s'il n'existe pas.
  */
 export async function getById(req: Request, res: Response) {
   const db = await getDb();
-  const stmt = db.prepare("SELECT * FROM clients WHERE id = ?");
+  const stmt = db.prepare(
+    `SELECT id, firstName, lastName, email, phone, address, city, province,
+            postalCode, dateNaissance, emailVerified, createdAt
+     FROM clients WHERE id = ?`
+  );
   stmt.bind([req.params.id as string]);
   if (stmt.step()) {
-    const v = stmt.getAsObject();
-    res.json(v);
+    res.json(stmt.getAsObject());
   } else {
     res.status(404).json({ error: "Client non trouvé" });
   }
