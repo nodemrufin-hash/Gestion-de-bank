@@ -4,8 +4,8 @@
     // CommonJS : le package n'est pas en "type": "module", et Node doit pouvoir
     // exécuter `dist/index.js` directement (npm start). En ESNext, tsc émettait
     // des imports sans extension .js, que Node ne peut pas résoudre.
+    // La résolution de modules adaptée est déduite automatiquement.
     "module": "CommonJS",
-    "moduleResolution": "node",
     "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./src",
