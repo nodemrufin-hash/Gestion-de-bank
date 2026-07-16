@@ -58,6 +58,9 @@ router.get("/clients/:id", requireSelfOrAdmin("id"), clients.getById);
 router.get("/clients/:id/accounts", requireSelfOrAdmin("id"), clients.getAccounts);
 router.get("/clients/:id/balances", requireSelfOrAdmin("id"), clients.getBalancesByCategory);
 router.post("/clients/:id/reset", requireSelfOrAdmin("id"), clients.resetClient);
+// Suppression définitive d'un client : admin uniquement (le contrôleur exige
+// en plus le mot de passe de l'admin courant).
+router.delete("/clients/:id", requireAdmin, clients.deleteClient);
 
 // --- Transactions (lecture : le compte doit appartenir à l'appelant) ---
 router.get("/accounts/:accountId/transactions", requireOwnsAccount("accountId"), transactions.getByAccount);
