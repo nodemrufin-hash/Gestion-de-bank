@@ -101,11 +101,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          <p className="text-xs text-slate-400 text-center mt-4">
-            Démo : <span className="font-medium">admin@banque.ca</span> · mot de
-            passe <span className="font-medium">Admin1234!</span>
-          </p>
-
           <p className="text-center text-sm text-slate-500 mt-6">
             <Link
               href="/login"

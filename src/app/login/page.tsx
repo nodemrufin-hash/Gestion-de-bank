@@ -132,12 +132,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-xs text-slate-400 text-center mt-4">
-            Démo : un client existant (ex.{" "}
-            <span className="font-medium">alice.tremblay@email.ca</span>) · mot
-            de passe <span className="font-medium">Test1234!</span>
-          </p>
-
           <p className="text-center text-sm text-slate-500 mt-6">
             Pas encore de profil ?{" "}
             <Link
