@@ -254,7 +254,7 @@ export default function AdminPage() {
         </div>
       )}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-600">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -267,10 +267,14 @@ export default function AdminPage() {
         <div className="card divide-y divide-slate-100">
           {parameters.map((p) => (
             <div key={p.key} className="p-4 flex items-center gap-4">
-              <label className="text-sm font-bold font-display text-slate-900 flex-1">
+              <label
+                htmlFor={`param-${p.key}`}
+                className="text-sm font-bold font-display text-slate-900 flex-1"
+              >
                 {paramLabels[p.key] || p.key}
               </label>
               <input
+                id={`param-${p.key}`}
                 type="text"
                 value={editValues[p.key] || ""}
                 onChange={(e) =>
@@ -314,7 +318,7 @@ export default function AdminPage() {
                 <button
                   onClick={() => handleDeleteAdmin(a.id, a.email)}
                   disabled={admins.length <= 1}
-                  className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-4 py-2 bg-red-50 text-red-700 rounded-lg text-xs font-semibold hover:bg-red-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                   title={
                     admins.length <= 1
                       ? "Impossible de supprimer le dernier administrateur"
@@ -335,10 +339,14 @@ export default function AdminPage() {
           </p>
           <div className="flex flex-wrap gap-3 items-end">
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-extrabold font-display text-brand-steel mb-1 leading-relaxed tracking-wide">
+              <label
+                htmlFor="newAdminEmail"
+                className="block text-sm font-extrabold font-display text-brand-steel mb-1 leading-relaxed tracking-wide"
+              >
                 Courriel
               </label>
               <input
+                id="newAdminEmail"
                 type="email"
                 value={newAdminEmail}
                 onChange={(e) => setNewAdminEmail(e.target.value)}
@@ -347,10 +355,14 @@ export default function AdminPage() {
               />
             </div>
             <div className="flex-1 min-w-[180px]">
-              <label className="block text-sm font-extrabold font-display text-brand-steel mb-1 leading-relaxed tracking-wide">
+              <label
+                htmlFor="newAdminPassword"
+                className="block text-sm font-extrabold font-display text-brand-steel mb-1 leading-relaxed tracking-wide"
+              >
                 Mot de passe (min 8)
               </label>
               <input
+                id="newAdminPassword"
                 type="password"
                 value={newAdminPassword}
                 onChange={(e) => setNewAdminPassword(e.target.value)}
@@ -361,10 +373,14 @@ export default function AdminPage() {
           </div>
           <div className="flex flex-wrap gap-3 items-end mt-3 pt-3 border-t border-slate-100">
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-extrabold font-display text-brand-steel mb-1 leading-relaxed tracking-wide">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-extrabold font-display text-brand-steel mb-1 leading-relaxed tracking-wide"
+              >
                 Votre mot de passe (confirmation)
               </label>
               <input
+                id="confirmPassword"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -398,7 +414,7 @@ export default function AdminPage() {
                   onClick={() =>
                     handleResetClient(c.id, `${c.firstName} ${c.lastName}`)
                   }
-                  className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-100 transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-red-50 text-red-700 rounded-lg text-xs font-semibold hover:bg-red-100 transition-colors cursor-pointer"
                 >
                   Réinitialiser
                 </button>
@@ -444,6 +460,9 @@ export default function AdminPage() {
         <p>{confirmState?.message}</p>
         {confirmState?.needsPassword && (
           <input
+            // aria-label : le champ n'a pas de libellé visible, le texte de la
+            // modale au-dessus tenant lieu d'explication.
+            aria-label="Votre mot de passe administrateur"
             type="password"
             value={modalPwd}
             onChange={(e) => setModalPwd(e.target.value)}
