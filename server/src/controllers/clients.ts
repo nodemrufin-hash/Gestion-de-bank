@@ -84,15 +84,23 @@ export async function create(req: Request, res: Response) {
 
 /**
  * Renvoie la liste de tous les clients, triés par nom puis prénom.
- * @param res Tableau JSON de clients (objet aplati par colonne).
+ *
+ * Les colonnes sont sélectionnées explicitement et lues par nom : le mot de
+ * passe n'est jamais exposé, et le résultat ne dépend pas de l'ordre des
+ * colonnes en base (celui-ci diffère entre une base créée par le schéma et une
+ * base migrée par `ALTER TABLE`, qui ajoute les colonnes en fin de table).
+ * @param res Tableau JSON de clients (sans données sensibles).
  */
 export async function getAll(req: Request, res: Response) {
   const db = await getDb();
-  const clients = db.exec("SELECT * FROM clients ORDER BY lastName, firstName");
-  const rows = clients.length > 0 ? clients[0].values.map((v: any[]) => ({
-    id: v[0], firstName: v[1], lastName: v[2], email: v[3], phone: v[4],
-    address: v[5], city: v[6], province: v[7], postalCode: v[8], dateNaissance: v[9],
-  })) : [];
+  const stmt = db.prepare(
+    `SELECT id, firstName, lastName, email, phone, address, city, province,
+            postalCode, dateNaissance, emailVerified
+     FROM clients ORDER BY lastName, firstName`
+  );
+  const rows: any[] = [];
+  while (stmt.step()) rows.push(stmt.getAsObject());
+  stmt.free();
   res.json(rows);
 }
 
