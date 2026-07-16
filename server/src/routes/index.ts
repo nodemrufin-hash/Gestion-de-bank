@@ -62,7 +62,9 @@ router.post("/clients", clients.create); // inscription : public
 router.get("/clients/:id", requireSelfOrAdmin("id"), clients.getById);
 router.get("/clients/:id/accounts", requireSelfOrAdmin("id"), clients.getAccounts);
 router.get("/clients/:id/balances", requireSelfOrAdmin("id"), clients.getBalancesByCategory);
-router.post("/clients/:id/reset", requireSelfOrAdmin("id"), clients.resetClient);
+// Réinitialisation d'un profil (efface comptes/transactions) : admin uniquement.
+// C'est une action de gestion, déclenchée depuis l'espace d'administration.
+router.post("/clients/:id/reset", requireAdmin, clients.resetClient);
 // Suppression définitive d'un client : admin uniquement (le contrôleur exige
 // en plus le mot de passe de l'admin courant).
 router.delete("/clients/:id", requireAdmin, clients.deleteClient);
