@@ -107,9 +107,9 @@ export default function AdminPage() {
 
   if (!authorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-500">
+      <main className="min-h-screen flex items-center justify-center text-slate-500">
         Chargement...
-      </div>
+      </main>
     );
   }
 
@@ -229,7 +229,8 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 py-10">
+    // <main> : repère principal de la page, attendu par les lecteurs d'écran.
+    <main className="max-w-4xl mx-auto space-y-8 py-10">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-extrabold text-slate-900 font-display">
@@ -453,6 +454,6 @@ export default function AdminPage() {
         )}
         {modalError && <p className="text-sm text-red-500">{modalError}</p>}
       </ConfirmModal>
-    </div>
+    </main>
   );
 }

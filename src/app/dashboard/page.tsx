@@ -53,9 +53,9 @@ export default function DashboardPage() {
 
   if (!authorized) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-500">
+      <main className="min-h-screen flex items-center justify-center text-slate-500">
         Chargement...
-      </div>
+      </main>
     );
   }
 
@@ -79,7 +79,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto p-4 lg:p-8">
+      <main className="max-w-6xl mx-auto p-4 lg:p-8">
         <h1 className="text-2xl font-bold text-slate-900 mb-6 font-display">
           Clients
         </h1>
@@ -116,7 +116,7 @@ export default function DashboardPage() {
             ))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

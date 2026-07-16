@@ -9,7 +9,9 @@
   --color-brand-300: #9fb8c9;
   --color-brand-50: #f2f5f7;
   --color-brand-cream: #ede8d0;
-  --color-brand-steel: #4682b4;
+  /* Bleu acier assombri : la teinte d'origine (#4682b4) ne donnait que 4,11:1
+     sur blanc, sous le seuil WCAG AA (4,5:1) pour du texte normal. */
+  --color-brand-steel: #3d74a1;
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-syne), system-ui, sans-serif;
