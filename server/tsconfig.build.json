@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "comment": "Configuration du build de production : réutilise tsconfig.json mais exclut les tests et leur configuration (ils ne doivent pas partir dans dist).",
+  "exclude": ["node_modules", "dist", "src/__tests__", "vitest.config.ts"]
+}
