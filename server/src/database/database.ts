@@ -10,7 +10,10 @@ import fs from "fs";
 import path from "path";
 import { SCHEMA } from "./schema";
 
-const DB_PATH = path.join(__dirname, "..", "..", "data", "banque.db");
+// Chemin de la base. Configurable via `DB_PATH` pour permettre aux tests
+// automatisés d'utiliser une base isolée, sans jamais toucher aux données réelles.
+const DB_PATH =
+  process.env.DB_PATH || path.join(__dirname, "..", "..", "data", "banque.db");
 
 let db: SqlJsDatabase | null = null;
 
