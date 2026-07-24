@@ -9,5 +9,6 @@ export default defineConfig({
     // Un seul fichier à la fois : la base sql.js est une instance partagée.
     fileParallelism: false,
     testTimeout: 20000,
+    reporters: ["default", "html"],
   },
 });
