@@ -49,3 +49,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# rapports de couverture de tests
+coverage/
+
+# rapport HTML des résultats de tests (vitest)
+html/
