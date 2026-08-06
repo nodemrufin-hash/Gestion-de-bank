@@ -256,7 +256,7 @@ lisent/modifient la base et renvoient une réponse JSON.
 
 **`ensureAuthSetup` (dans `auth.ts`)** est appelée au démarrage et est
 **idempotente** : elle ajoute les colonnes d'authentification/vérification aux
-anciennes bases, attribue le mot de passe par défaut (`Test1234!`) aux clients
+anciennes bases, attribue le mot de passe par défaut (`npm run dev`) aux clients
 de démonstration, considère les clients existants comme déjà vérifiés (pour ne
 pas bloquer leur connexion) et crée le compte admin par défaut
 (`admin@banque.ca` / `Admin1234!`) s'il n'existe pas.
