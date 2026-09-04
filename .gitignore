@@ -55,3 +55,9 @@ coverage/
 
 # rapport HTML des résultats de tests (vitest)
 html/
+# rapport de couverture de tests (vitest)
+coverage/
+node_modules/
+.next/
+frontend/public/uploads/references/*
+!frontend/public/uploads/references/.gitkeep
